@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Dom.io">
+  <title>Dom.io 🏠</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Nunito', sans-serif; background: #f8f6f2; color: #1a1a1a; min-height: 100vh; }
+    #root { max-width: 480px; margin: 0 auto; min-height: 100vh; background: #fff; position: relative; }
+
+    /* Cards */
+    .card { background: #fff; border: 1px solid #ebebeb; border-radius: 14px; padding: 14px 16px; margin-bottom: 8px; }
+    .card-sm { background: #fff; border: 1px solid #ebebeb; border-radius: 14px; padding: 10px 14px; margin-bottom: 7px; }
+
+    /* Buttons */
+    button { font-family: 'Nunito', sans-serif; cursor: pointer; transition: transform 0.1s, opacity 0.1s; }
+    button:active { transform: scale(0.96); }
+
+    /* Nav */
+    .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; display: flex; border-top: 1px solid #ebebeb; background: #fff; z-index: 50; padding-bottom: env(safe-area-inset-bottom); }
+    .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 10px 0; border: none; background: transparent; font-size: 10px; font-weight: 500; }
+    .nav-btn .ico { font-size: 20px; }
+
+    /* Avatar */
+    .av { border-radius: 50%; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+    /* Misc */
+    .pill { font-size: 10px; padding: 2px 7px; border-radius: 99px; display: inline-flex; align-items: center; gap: 2px; }
+    .strike { text-decoration: line-through; }
+    .muted { color: #888; }
+    .small { font-size: 11px; }
+
+    /* Toast */
+    .toast { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 8px 18px; font-size: 13px; font-weight: 600; z-index: 999; white-space: nowrap; box-shadow: 0 2px 12px rgba(0,0,0,0.1); }
+
+    /* Progress bar */
+    .bar-track { height: 5px; background: #f0f0f0; border-radius: 3px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
+
+    /* Header */
+    .header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid #ebebeb; background: #fff; position: sticky; top: 0; z-index: 40; }
+
+    /* Scrollable content */
+    .content { padding: 12px 12px 80px; }
+
+    /* Login */
+    .login-wrap { padding: 32px 16px 24px; }
+    .login-logo { text-align: center; margin-bottom: 28px; }
+    .login-logo h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
+    .login-logo p { font-size: 13px; color: #888; margin-top: 4px; }
+
+    /* Icon wrapper */
+    .icon-box { width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0; }
+
+    /* Done badge */
+    .done-badge { font-size: 12px; background: #E1F5EE; color: #0F6E56; padding: 3px 9px; border-radius: 99px; font-weight: 600; }
+
+    @media (max-width: 380px) { .card { padding: 12px; } }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel">
+const { useState, useEffect, useCallback } = React;
+
+// ═══════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════
+const BROS = [
+  { name: "Bartek",  init: "B", accent: "#EF9F27", light: "#FAEEDA", dark: "#8C5A0E" },
+  { name: "Kuba",    init: "K", accent: "#1D9E75", light: "#E1F5EE", dark: "#0A5E41" },
+  { name: "Mikołaj", init: "M", accent: "#378ADD", light: "#E6F1FB", dark: "#0E4A87" },
+];
+
+const TASKS = [
+  { id:"zmywanie",    name:"Zmywanie naczyń",    icon:"🍽️", assign:"rot3",    note:"Codziennie po kolacji" },
+  { id:"odkurzanie",  name:"Odkurzanie",          icon:"🧹", assign:"rot3",    note:"Raz w tygodniu" },
+  { id:"smieci",      name:"Wynoszenie śmieci",   icon:"🗑️", assign:"rot3",    note:"Wtorek i piątek" },
+  { id:"laz-wspolna", name:"Łazienka wspólna",    icon:"🚿", assign:"rot2km",  note:"Kuba / Mikołaj co tydzień" },
+  { id:"laz-bartek",  name:"Łazienka Bartka",     icon:"🛁", assign:["Bartek"],note:"Tylko Bartek" },
+  { id:"salon",       name:"Sprzątanie salonu",   icon:"🛋️", assign:"rot3",    note:"Raz w tygodniu" },
+  { id:"pranie",      name:"Pranie",              icon:"👕", assign:"rot3",    note:"Raz w tygodniu" },
+  { id:"wieszanie",   name:"Wieszanie prania",    icon:"🪣", assign:"rot3",    note:"Po każdym praniu" },
+  { id:"kuchenka",    name:"Mycie kuchenki",      icon:"🍳", assign:"rot3",    note:"Raz w tygodniu" },
+  { id:"zakupy",      name:"Zakupy",              icon:"🛒", assign:"rot3",    note:"Raz w tygodniu" },
+  { id:"generalne",   name:"Generalne sprzątanie",icon:"✨", assign:"all",     note:"Co 2 tyg. — podłogi + okna" },
+];
+
+// ═══════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════
+const getBro  = n => BROS.find(b => b.name === n) || BROS[0];
+
+const getAssigned = (task, wk) => {
+  if (task.assign === "rot3")   return [BROS[wk % 3].name];
+  if (task.assign === "rot2km") return [wk % 2 === 0 ? "Kuba" : "Mikołaj"];
+  if (task.assign === "all")    return BROS.map(b => b.name);
+  return task.assign;
+};
+
+const getWeek = () => {
+  const d = new Date(), s = new Date(d.getFullYear(), 0, 1);
+  return Math.ceil(((d - s) / 86400000 + s.getDay() + 1) / 7);
+};
+
+const fmt = iso => {
+  const d = new Date(iso);
+  return d.toLocaleDateString("pl-PL", { day:"numeric", month:"short" })
+    + " " + d.toLocaleTimeString("pl-PL", { hour:"2-digit", minute:"2-digit" });
+};
+
+const loadData = () => {
+  try { return JSON.parse(localStorage.getItem("domio-v3") || "[]"); }
+  catch { return []; }
+};
+const saveData = data => {
+  try { localStorage.setItem("domio-v3", JSON.stringify(data)); } catch {}
+};
+
+// ═══════════════════════════════════════
+//  AVATAR
+// ═══════════════════════════════════════
+function Av({ name, size = 36 }) {
+  const b = getBro(name);
+  return (
+    <div className="av" style={{
+      width: size, height: size,
+      background: b.light, color: b.dark,
+      fontSize: Math.round(size * 0.42),
+      border: `2px solid ${b.accent}`,
+    }}>
+      {b.init}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════
+//  APP
+// ═══════════════════════════════════════
+function App() {
+  const [page,  setPage]  = useState("login");
+  const [user,  setUser]  = useState(null);
+  const [comps, setComps] = useState(() => loadData());
+  const [notif, setNotif] = useState(false);
+  const [toast, setToast] = useState(null);
+
+  const wk   = getWeek();
+  const wKey = `${new Date().getFullYear()}-W${wk}`;
+  const ub   = user ? getBro(user) : null;
+
+  useEffect(() => { saveData(comps); }, [comps]);
+
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 2500);
+    return () => clearTimeout(t);
+  }, [toast]);
+
+  const isDone = (id, who) =>
+    comps.some(c => c.id === id && c.wk === wKey && c.who === (who ?? user));
+
+  const getC = (id, who) =>
+    comps.find(c => c.id === id && c.wk === wKey && c.who === (who ?? user));
+
+  const mark = id => {
+    if (!user || isDone(id)) return;
+    const task = TASKS.find(t => t.id === id);
+    setComps(p => [...p, { id, who: user, when: new Date().toISOString(), wk: wKey }]);
+    setToast(`✓ ${task?.name}`);
+    if (notif && Notification.permission === "granted")
+      new Notification("Dom.io 🏠", { body: `${user} właśnie wykonał(a): ${task?.name}`, icon: "https://em-content.zobj.net/source/twitter/408/house_1f3e0.png" });
+  };
+
+  const enableNotif = () => {
+    if (!("Notification" in window)) { setToast("Ta przeglądarka nie obsługuje powiadomień"); return; }
+    Notification.requestPermission().then(p => {
+      if (p === "granted") { setNotif(true); setToast("🔔 Powiadomienia włączone!"); }
+      else setToast("Odmówiono dostępu do powiadomień");
+    });
+  };
+
+  const mScore = name => {
+    const s = new Date(); s.setDate(1); s.setHours(0,0,0,0);
+    return comps.filter(c => c.who === name && new Date(c.when) >= s).length;
+  };
+
+  const myTasks = user ? TASKS.filter(t => getAssigned(t, wk).includes(user)) : [];
+  const myDone  = myTasks.filter(t => isDone(t.id)).length;
+
+  // ── LOGIN ──────────────────────────────
+  if (!user) return (
+    <div className="login-wrap">
+      <div className="login-logo">
+        <h1>Dom.io 🏠</h1>
+        <p>Obowiązki domowe pod kontrolą</p>
+      </div>
+
+      {BROS.map(b => (
+        <div key={b.name}
+          className="card"
+          onClick={() => { setUser(b.name); setPage("dashboard"); }}
+          style={{ cursor:"pointer", display:"flex", alignItems:"center", gap:14,
+            borderLeft:`4px solid ${b.accent}`, transition:"box-shadow 0.15s" }}>
+          <Av name={b.name} size={52} />
+          <div style={{ flex:1 }}>
+            <div style={{ fontWeight:800, fontSize:18 }}>{b.name}</div>
+            <div className="muted small" style={{ marginTop:3 }}>
+              {TASKS.filter(t => getAssigned(t, wk).includes(b.name)).length} zadań w tym tygodniu
+            </div>
+          </div>
+          <div style={{ textAlign:"right" }}>
+            <div style={{ fontSize:22, fontWeight:800, color:b.accent }}>{mScore(b.name)}</div>
+            <div className="small muted">ten miesiąc</div>
+          </div>
+        </div>
+      ))}
+
+      <div className="muted small" style={{ textAlign:"center", marginTop:18 }}>
+        Tydzień {wk} · {new Date().toLocaleDateString("pl-PL", { month:"long", year:"numeric" })}
+      </div>
+    </div>
+  );
+
+  // ── MAIN LAYOUT ───────────────────────
+  return (
+    <>
+      {/* Toast */}
+      {toast && <div className="toast">{toast}</div>}
+
+      {/* Header */}
+      <div className="header">
+        <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+          <Av name={user} size={32} />
+          <div>
+            <div style={{ fontWeight:700, fontSize:15 }}>{user}</div>
+            <div className="small muted">
+              {page === "mine"
+                ? `${myDone}/${myTasks.length} zrobionych`
+                : `Tydzień ${wk}`}
+            </div>
+          </div>
+        </div>
+        <div style={{ display:"flex", gap:6 }}>
+          <button onClick={notif ? undefined : enableNotif}
+            title={notif ? "Powiadomienia aktywne" : "Włącz powiadomienia"}
+            style={{ padding:"6px 10px", border:`1px solid ${notif ? ub.accent : "#ddd"}`,
+              borderRadius:10, background: notif ? ub.light : "transparent",
+              fontSize:16, color: notif ? ub.dark : "#999" }}>
+            {notif ? "🔔" : "🔕"}
+          </button>
+          <button onClick={() => setUser(null)}
+            style={{ padding:"6px 11px", border:"1px solid #ddd", borderRadius:10,
+              background:"transparent", fontSize:12, fontWeight:600, color:"#888" }}>
+            Zmień
+          </button>
+        </div>
+      </div>
+
+      {/* ── DASHBOARD ─────────────────── */}
+      {page === "dashboard" && (
+        <div className="content">
+          {/* Summary row */}
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:7, marginBottom:12 }}>
+            {BROS.map(b => {
+              const bt = TASKS.filter(t => getAssigned(t, wk).includes(b.name));
+              const bd = bt.filter(t => isDone(t.id, b.name)).length;
+              return (
+                <div key={b.name} style={{ background:"#fff", border:"1px solid #ebebeb",
+                  borderTop:`4px solid ${b.accent}`, borderRadius:14,
+                  padding:"10px 8px", textAlign:"center" }}>
+                  <div style={{ display:"flex", justifyContent:"center" }}><Av name={b.name} size={26}/></div>
+                  <div style={{ fontWeight:700, fontSize:13, marginTop:5 }}>{b.name}</div>
+                  <div className="small" style={{ color: bd===bt.length ? "#0A5E41" : "#aaa" }}>
+                    {bd}/{bt.length}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Task list */}
+          {TASKS.map(task => {
+            const resp     = getAssigned(task, wk);
+            const isAll    = task.assign === "all";
+            const doneWho  = BROS.filter(b => isDone(task.id, b.name));
+            const allDone  = isAll ? doneWho.length === BROS.length : doneWho.length > 0;
+            const sComp    = !isAll && doneWho[0] ? getC(task.id, doneWho[0].name) : null;
+            const assignedColor = !isAll && resp.length === 1 ? getBro(resp[0]).accent : "#ddd";
+
+            return (
+              <div key={task.id} className="card-sm"
+                style={{ display:"flex", alignItems:"center", gap:10,
+                  borderLeft:`4px solid ${allDone ? "#1D9E75" : assignedColor}`,
+                  opacity: allDone ? 0.5 : 1 }}>
+                <div className="icon-box"
+                  style={{ background: allDone ? "#E1F5EE" : "#f5f5f5",
+                    fontSize: allDone ? 16 : 19 }}>
+                  {allDone ? "✓" : task.icon}
+                </div>
+                <div style={{ flex:1, minWidth:0 }}>
+                  <div style={{ fontWeight:700, fontSize:13,
+                    color: allDone ? "#aaa" : "#1a1a1a",
+                    textDecoration: allDone ? "line-through" : "none",
+                    marginBottom:3 }}>
+                    {task.name}
+                  </div>
+                  {isAll ? (
+                    <div style={{ display:"flex", gap:3, flexWrap:"wrap" }}>
+                      {BROS.map(b => {
+                        const bd = isDone(task.id, b.name);
+                        return (
+                          <span key={b.name} className="pill"
+                            style={{ background: bd ? b.light : "#f5f5f5",
+                              color: bd ? b.dark : "#aaa",
+                              border: `1px solid ${bd ? b.accent : "#e8e8e8"}` }}>
+                            {bd && "✓ "}{b.name}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div style={{ display:"flex", alignItems:"center", gap:7 }}>
+                      {resp.map(n => (
+                        <div key={n} style={{ display:"flex", alignItems:"center", gap:3 }}>
+                          <Av name={n} size={16}/>
+                          <span className="small muted">{n}</span>
+                        </div>
+                      ))}
+                      {sComp && (
+                        <span className="small" style={{ color:"#0A5E41" }}>
+                          · {fmt(sComp.when)}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* ── MOJE ZADANIA ──────────────── */}
+      {page === "mine" && (
+        <div className="content">
+          {myTasks.length === 0 ? (
+            <div className="card" style={{ textAlign:"center", padding:"40px 16px" }}>
+              <div style={{ fontSize:40, marginBottom:12 }}>🎉</div>
+              <div style={{ fontWeight:700, fontSize:16 }}>Ten tydzień masz wolny!</div>
+              <div className="muted small" style={{ marginTop:6 }}>Odpoczywaj, zasłużyłeś.</div>
+            </div>
+          ) : myTasks.map(task => {
+            const d = isDone(task.id);
+            const c = d ? getC(task.id) : null;
+            return (
+              <div key={task.id} className="card"
+                style={{ display:"flex", alignItems:"center", gap:13,
+                  borderLeft:`4px solid ${d ? "#1D9E75" : ub.accent}`,
+                  opacity: d ? 0.55 : 1 }}>
+                <div className="icon-box"
+                  style={{ width:44, height:44, background: d ? "#E1F5EE" : ub.light,
+                    fontSize: d ? 18 : 22, color: d ? "#0A5E41" : ub.dark }}>
+                  {d ? "✓" : task.icon}
+                </div>
+                <div style={{ flex:1, minWidth:0 }}>
+                  <div style={{ fontWeight:700, fontSize:15, marginBottom:3,
+                    color: d ? "#aaa" : "#1a1a1a",
+                    textDecoration: d ? "line-through" : "none" }}>
+                    {task.name}
+                  </div>
+                  <div className="small muted">
+                    {c ? `Zrobione: ${fmt(c.when)}` : task.note}
+                  </div>
+                </div>
+                {!d && (
+                  <button onClick={() => mark(task.id)}
+                    style={{ background:ub.accent, color:"#fff", border:"none",
+                      borderRadius:11, padding:"9px 14px", fontSize:13, fontWeight:800,
+                      display:"flex", alignItems:"center", gap:5, flexShrink:0 }}>
+                    ✓ Gotowe
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* ── WYNIKI ────────────────────── */}
+      {page === "scores" && (() => {
+        const sorted = [...BROS].sort((a,b) => mScore(b.name) - mScore(a.name));
+        const maxS   = Math.max(...BROS.map(b => mScore(b.name)), 1);
+        const recent = [...comps].sort((a,b) => new Date(b.when) - new Date(a.when)).slice(0, 25);
+        const medals = ["🥇","🥈","🥉"];
+        const month  = new Date().toLocaleDateString("pl-PL", { month:"long", year:"numeric" });
+
+        return (
+          <div className="content">
+            <div className="muted small" style={{ marginBottom:10, textTransform:"capitalize" }}>
+              Wyniki · {month}
+            </div>
+
+            {/* Ranking */}
+            <div className="card" style={{ marginBottom:14 }}>
+              {sorted.map((b, i) => (
+                <div key={b.name} style={{ display:"flex", alignItems:"center", gap:10,
+                  padding:"11px 0",
+                  borderBottom: i < 2 ? "1px solid #f0f0f0" : "none" }}>
+                  <span style={{ fontSize:20, width:24, textAlign:"center", flexShrink:0 }}>{medals[i]}</span>
+                  <Av name={b.name} size={34}/>
+                  <div style={{ flex:1 }}>
+                    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:5 }}>
+                      <span style={{ fontWeight:700, fontSize:14 }}>{b.name}</span>
+                      <span style={{ fontSize:16, fontWeight:800, color:b.accent }}>{mScore(b.name)}</span>
+                    </div>
+                    <div className="bar-track">
+                      <div className="bar-fill" style={{ width:`${Math.round((mScore(b.name)/maxS)*100)}%`, background:b.accent }}/>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Activity feed */}
+            <div className="small muted" style={{ marginBottom:8 }}>Ostatnia aktywność</div>
+            {recent.length === 0 ? (
+              <div className="card" style={{ textAlign:"center", padding:"24px", color:"#aaa" }}>
+                Brak aktywności — czas wziąć się do pracy 🧹
+              </div>
+            ) : recent.map((c, i) => {
+              const task = TASKS.find(t => t.id === c.id);
+              return (
+                <div key={i} className="card-sm" style={{ display:"flex", alignItems:"center", gap:10 }}>
+                  <Av name={c.who} size={28}/>
+                  <div style={{ flex:1 }}>
+                    <span style={{ fontWeight:700, fontSize:13 }}>{c.who}</span>
+                    <span style={{ fontSize:13, color:"#555" }}> — {task?.name || c.id}</span>
+                    <div className="small muted" style={{ marginTop:1 }}>{fmt(c.when)}</div>
+                  </div>
+                  <span style={{ fontSize:18 }}>{task?.icon || "📋"}</span>
+                </div>
+              );
+            })}
+          </div>
+        );
+      })()}
+
+      {/* Bottom Nav */}
+      <nav className="bottom-nav">
+        {[
+          { id:"dashboard", label:"Przegląd",    ico:"🏠" },
+          { id:"mine",      label:"Moje zadania", ico:"✅" },
+          { id:"scores",    label:"Wyniki",       ico:"🏆" },
+        ].map(({ id, label, ico }) => (
+          <button key={id} className="nav-btn" onClick={() => setPage(id)}
+            style={{ color: page===id ? ub.accent : "#aaa",
+              borderTop: page===id ? `3px solid ${ub.accent}` : "3px solid transparent",
+              fontWeight: page===id ? 700 : 500 }}>
+            <span className="ico">{ico}</span>
+            {label}
+          </button>
+        ))}
+      </nav>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
