@@ -2,237 +2,420 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <meta name="theme-color" content="#ffffff">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Dom.io">
+  <link rel="manifest" href="manifest.json">
   <title>Dom.io 🏠</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    body { font-family: 'Nunito', sans-serif; background: #f8f6f2; color: #1a1a1a; min-height: 100vh; }
-    #root { max-width: 480px; margin: 0 auto; min-height: 100vh; background: #fff; position: relative; }
-
-    /* Cards */
-    .card { background: #fff; border: 1px solid #ebebeb; border-radius: 14px; padding: 14px 16px; margin-bottom: 8px; }
-    .card-sm { background: #fff; border: 1px solid #ebebeb; border-radius: 14px; padding: 10px 14px; margin-bottom: 7px; }
-
-    /* Buttons */
-    button { font-family: 'Nunito', sans-serif; cursor: pointer; transition: transform 0.1s, opacity 0.1s; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; overflow: hidden; }
+    body { font-family: 'Nunito', sans-serif; background: #f8f6f2; color: #1a1a1a; }
+    #root { max-width: 480px; margin: 0 auto; height: 100vh; display: flex; flex-direction: column; background: #fff; overflow: hidden; position: relative; }
+    .scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 12px 12px 80px; }
+    .card { background: #fff; border: 1px solid #ebebeb; border-radius: 14px; padding: 14px 15px; margin-bottom: 8px; }
+    .card-sm { background: #fff; border: 1px solid #ebebeb; border-radius: 12px; padding: 10px 13px; margin-bottom: 7px; }
+    button { font-family: 'Nunito', sans-serif; cursor: pointer; transition: transform .1s, opacity .1s; border: none; }
     button:active { transform: scale(0.96); }
-
-    /* Nav */
-    .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; display: flex; border-top: 1px solid #ebebeb; background: #fff; z-index: 50; padding-bottom: env(safe-area-inset-bottom); }
-    .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 10px 0; border: none; background: transparent; font-size: 10px; font-weight: 500; }
-    .nav-btn .ico { font-size: 20px; }
-
-    /* Avatar */
+    .toast { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: #fff; border-radius: 24px; padding: 9px 20px; font-size: 13px; font-weight: 700; z-index: 999; white-space: nowrap; }
+    .header { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; border-bottom: 1px solid #ebebeb; background: #fff; flex-shrink: 0; }
+    .bottom-nav { display: flex; border-top: 1px solid #ebebeb; background: #fff; flex-shrink: 0; padding-bottom: env(safe-area-inset-bottom, 0); }
+    .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 0 10px; background: transparent; font-family: 'Nunito', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: .3px; }
     .av { border-radius: 50%; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-
-    /* Misc */
-    .pill { font-size: 10px; padding: 2px 7px; border-radius: 99px; display: inline-flex; align-items: center; gap: 2px; }
-    .strike { text-decoration: line-through; }
-    .muted { color: #888; }
-    .small { font-size: 11px; }
-
-    /* Toast */
-    .toast { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 8px 18px; font-size: 13px; font-weight: 600; z-index: 999; white-space: nowrap; box-shadow: 0 2px 12px rgba(0,0,0,0.1); }
-
-    /* Progress bar */
+    .badge { display: inline-flex; align-items: center; gap: 2px; font-size: 10px; padding: 2px 7px; border-radius: 99px; }
+    .toggle { width: 46px; height: 26px; border-radius: 13px; position: relative; cursor: pointer; transition: background .2s; }
+    .toggle-knob { width: 20px; height: 20px; border-radius: 50%; background: #fff; position: absolute; top: 3px; transition: left .2s; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
     .bar-track { height: 5px; background: #f0f0f0; border-radius: 3px; overflow: hidden; }
-    .bar-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
-
-    /* Header */
-    .header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid #ebebeb; background: #fff; position: sticky; top: 0; z-index: 40; }
-
-    /* Scrollable content */
-    .content { padding: 12px 12px 80px; }
-
-    /* Login */
-    .login-wrap { padding: 32px 16px 24px; }
-    .login-logo { text-align: center; margin-bottom: 28px; }
-    .login-logo h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
-    .login-logo p { font-size: 13px; color: #888; margin-top: 4px; }
-
-    /* Icon wrapper */
-    .icon-box { width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0; }
-
-    /* Done badge */
-    .done-badge { font-size: 12px; background: #E1F5EE; color: #0F6E56; padding: 3px 9px; border-radius: 99px; font-weight: 600; }
-
-    @media (max-width: 380px) { .card { padding: 12px; } }
+    .bar-fill { height: 100%; border-radius: 3px; transition: width .4s ease; }
+    .setup-wrap { height: 100vh; overflow-y: auto; padding: 28px 18px 40px; }
+    textarea:focus, input:focus { outline: 2px solid #1D9E75; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+    .spinner { width: 28px; height: 28px; border: 3px solid #f0f0f0; border-top: 3px solid #1D9E75; border-radius: 50%; animation: spin .7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
 <div id="root"></div>
 
+<!-- Service Worker -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    });
+  }
+</script>
+
+<!-- Firebase 10 compat -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+<!-- React 18 -->
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-<script type="text/babel">
-const { useState, useEffect, useCallback } = React;
 
-// ═══════════════════════════════════════
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+
+// ═══════════════════════════════════════════════
 //  DATA
-// ═══════════════════════════════════════
+// ═══════════════════════════════════════════════
 const BROS = [
-  { name: "Bartek",  init: "B", accent: "#EF9F27", light: "#FAEEDA", dark: "#8C5A0E" },
-  { name: "Kuba",    init: "K", accent: "#1D9E75", light: "#E1F5EE", dark: "#0A5E41" },
-  { name: "Mikołaj", init: "M", accent: "#378ADD", light: "#E6F1FB", dark: "#0E4A87" },
+  { name:'Bartek',  init:'B', accent:'#EF9F27', light:'#FAEEDA', dark:'#8C5A0E' },
+  { name:'Kuba',    init:'K', accent:'#1D9E75', light:'#E1F5EE', dark:'#0A5E41' },
+  { name:'Mikołaj', init:'M', accent:'#378ADD', light:'#E6F1FB', dark:'#0E4A87' },
 ];
 
 const TASKS = [
-  { id:"zmywanie",    name:"Zmywanie naczyń",    icon:"🍽️", assign:"rot3",    note:"Codziennie po kolacji" },
-  { id:"odkurzanie",  name:"Odkurzanie",          icon:"🧹", assign:"rot3",    note:"Raz w tygodniu" },
-  { id:"smieci",      name:"Wynoszenie śmieci",   icon:"🗑️", assign:"rot3",    note:"Wtorek i piątek" },
-  { id:"laz-wspolna", name:"Łazienka wspólna",    icon:"🚿", assign:"rot2km",  note:"Kuba / Mikołaj co tydzień" },
-  { id:"laz-bartek",  name:"Łazienka Bartka",     icon:"🛁", assign:["Bartek"],note:"Tylko Bartek" },
-  { id:"salon",       name:"Sprzątanie salonu",   icon:"🛋️", assign:"rot3",    note:"Raz w tygodniu" },
-  { id:"pranie",      name:"Pranie",              icon:"👕", assign:"rot3",    note:"Raz w tygodniu" },
-  { id:"wieszanie",   name:"Wieszanie prania",    icon:"🪣", assign:"rot3",    note:"Po każdym praniu" },
-  { id:"kuchenka",    name:"Mycie kuchenki",      icon:"🍳", assign:"rot3",    note:"Raz w tygodniu" },
-  { id:"zakupy",      name:"Zakupy",              icon:"🛒", assign:"rot3",    note:"Raz w tygodniu" },
-  { id:"generalne",   name:"Generalne sprzątanie",icon:"✨", assign:"all",     note:"Co 2 tyg. — podłogi + okna" },
+  { id:'zmywanie',    name:'Zmywanie naczyń',    icon:'🍽️', assign:'rot3',    note:'Codziennie po kolacji' },
+  { id:'odkurzanie',  name:'Odkurzanie',          icon:'🧹', assign:'rot3',    note:'Raz w tygodniu' },
+  { id:'smieci',      name:'Wynoszenie śmieci',   icon:'🗑️', assign:'rot3',    note:'Wtorek i piątek' },
+  { id:'laz-wspolna', name:'Łazienka wspólna',    icon:'🚿', assign:'rot2km',  note:'Kuba / Mikołaj co tydzień' },
+  { id:'laz-bartek',  name:'Łazienka Bartka',     icon:'🛁', assign:['Bartek'],note:'Tylko Bartek' },
+  { id:'salon',       name:'Sprzątanie salonu',   icon:'🛋️', assign:'rot3',    note:'Raz w tygodniu' },
+  { id:'pranie',      name:'Pranie',              icon:'👕', assign:'rot3',    note:'Raz w tygodniu' },
+  { id:'wieszanie',   name:'Wieszanie prania',    icon:'🪣', assign:'rot3',    note:'Po każdym praniu' },
+  { id:'kuchenka',    name:'Mycie kuchenki',      icon:'🍳', assign:'rot3',    note:'Raz w tygodniu' },
+  { id:'zakupy',      name:'Zakupy',              icon:'🛒', assign:'rot3',    note:'Raz w tygodniu' },
+  { id:'generalne',   name:'Generalne sprzątanie',icon:'✨', assign:'all',     note:'Co 2 tyg. — podłogi + okna' },
 ];
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  HELPERS
-// ═══════════════════════════════════════
-const getBro  = n => BROS.find(b => b.name === n) || BROS[0];
-
+// ═══════════════════════════════════════════════
+const getBro = n => BROS.find(b => b.name === n) || BROS[0];
 const getAssigned = (task, wk) => {
-  if (task.assign === "rot3")   return [BROS[wk % 3].name];
-  if (task.assign === "rot2km") return [wk % 2 === 0 ? "Kuba" : "Mikołaj"];
-  if (task.assign === "all")    return BROS.map(b => b.name);
+  if (task.assign === 'rot3')   return [BROS[wk % 3].name];
+  if (task.assign === 'rot2km') return [wk % 2 === 0 ? 'Kuba' : 'Mikołaj'];
+  if (task.assign === 'all')    return BROS.map(b => b.name);
   return task.assign;
 };
-
 const getWeek = () => {
   const d = new Date(), s = new Date(d.getFullYear(), 0, 1);
   return Math.ceil(((d - s) / 86400000 + s.getDay() + 1) / 7);
 };
-
 const fmt = iso => {
   const d = new Date(iso);
-  return d.toLocaleDateString("pl-PL", { day:"numeric", month:"short" })
-    + " " + d.toLocaleTimeString("pl-PL", { hour:"2-digit", minute:"2-digit" });
+  return d.toLocaleDateString('pl-PL',{day:'numeric',month:'short'}) + ' ' +
+    d.toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit'});
+};
+const fmtRelative = iso => {
+  const diff = Date.now() - new Date(iso);
+  if (diff < 60000)  return 'przed chwilą';
+  if (diff < 3600000) return `${Math.floor(diff/60000)} min temu`;
+  if (diff < 86400000) return `${Math.floor(diff/3600000)} godz. temu`;
+  return fmt(iso);
 };
 
-const loadData = () => {
-  try { return JSON.parse(localStorage.getItem("domio-v3") || "[]"); }
-  catch { return []; }
-};
-const saveData = data => {
-  try { localStorage.setItem("domio-v3", JSON.stringify(data)); } catch {}
-};
+const FB_KEY = 'domio-firebase-cfg-v3';
+const REM_KEY = 'domio-reminders-v2';
 
-// ═══════════════════════════════════════
+let db = null, fbApp = null;
+
+function tryInitFirebase(config) {
+  try {
+    if (!fbApp) fbApp = firebase.initializeApp(config);
+    db = firebase.database();
+    db.ref('.info/connected'); // test connection
+    return true;
+  } catch(e) { console.error(e); return false; }
+}
+
+// ═══════════════════════════════════════════════
 //  AVATAR
-// ═══════════════════════════════════════
-function Av({ name, size = 36 }) {
+// ═══════════════════════════════════════════════
+function Av({ name, size=36 }) {
   const b = getBro(name);
   return (
     <div className="av" style={{
-      width: size, height: size,
-      background: b.light, color: b.dark,
-      fontSize: Math.round(size * 0.42),
-      border: `2px solid ${b.accent}`,
-    }}>
-      {b.init}
-    </div>
+      width:size, height:size, background:b.light, color:b.dark,
+      fontSize:Math.round(size*.42), border:`2px solid ${b.accent}`,
+    }}>{b.init}</div>
   );
 }
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  APP
-// ═══════════════════════════════════════
+// ═══════════════════════════════════════════════
 function App() {
-  const [page,  setPage]  = useState("login");
-  const [user,  setUser]  = useState(null);
-  const [comps, setComps] = useState(() => loadData());
-  const [notif, setNotif] = useState(false);
-  const [toast, setToast] = useState(null);
+  const [screen,      setScreen]      = useState('loading');
+  const [page,        setPage]        = useState('dashboard');
+  const [user,        setUser]        = useState(null);
+  const [comps,       setComps]       = useState([]);
+  const [notifOk,     setNotifOk]     = useState(false);
+  const [toast,       setToast]       = useState(null);
+  const [cfgInput,    setCfgInput]    = useState('');
+  const [cfgError,    setCfgError]    = useState('');
+  const [connecting,  setConnecting]  = useState(false);
+  const [online,      setOnline]      = useState(true);
+  const [reminders,   setReminders]   = useState(() => {
+    try { return JSON.parse(localStorage.getItem(REM_KEY) || '{}'); } catch { return {}; }
+  });
 
-  const wk   = getWeek();
-  const wKey = `${new Date().getFullYear()}-W${wk}`;
-  const ub   = user ? getBro(user) : null;
+  const wk      = getWeek();
+  const wKey    = `${new Date().getFullYear()}-W${wk}`;
+  const ub      = user ? getBro(user) : null;
+  const userRef = useRef(user);
+  const remTimers = useRef({});
+  const connectedAt = useRef(new Date().toISOString());
+  const listenerUp  = useRef(false);
 
-  useEffect(() => { saveData(comps); }, [comps]);
+  useEffect(() => { userRef.current = user; }, [user]);
 
+  // ── Boot ─────────────────────────────────────
+  useEffect(() => {
+    const saved = localStorage.getItem(FB_KEY);
+    if (saved) {
+      try {
+        const cfg = JSON.parse(saved);
+        if (tryInitFirebase(cfg)) { bootListeners(); setScreen('login'); }
+        else setScreen('setup');
+      } catch { setScreen('setup'); }
+    } else {
+      setScreen('setup');
+    }
+    setNotifOk(Notification.permission === 'granted');
+  }, []);
+
+  // ── Firebase listeners ────────────────────────
+  const bootListeners = useCallback(() => {
+    if (!db || listenerUp.current) return;
+    listenerUp.current = true;
+    connectedAt.current = new Date().toISOString();
+
+    db.ref('.info/connected').on('value', s => setOnline(!!s.val()));
+
+    // All completions (for dashboard + scores)
+    db.ref('domio/completions').on('value', snap => {
+      const raw = snap.val() || {};
+      setComps(Object.entries(raw).map(([k,v]) => ({...v, _key:k})));
+    });
+
+    // New completions by others → push notification
+    db.ref('domio/completions').on('child_added', snap => {
+      const c = snap.val();
+      if (!c || c.when <= connectedAt.current) return;
+      const who = userRef.current;
+      if (c.who !== who && who && Notification.permission === 'granted') {
+        const task = TASKS.find(t => t.id === c.id);
+        new Notification('Dom.io 🏠', {
+          body: `${c.who} właśnie zrobił(a): ${task?.name || c.id}`,
+          tag: snap.key,
+          icon: '📋',
+        });
+      }
+    });
+  }, []);
+
+  // ── Reminder scheduling ───────────────────────
+  useEffect(() => {
+    if (!user) return;
+    const r = reminders[user];
+    if (!r?.enabled || !r?.time) return;
+    if (remTimers.current[user]) clearTimeout(remTimers.current[user]);
+    scheduleReminderFor(user, r.time);
+  }, [user, reminders]);
+
+  const scheduleReminderFor = (name, time) => {
+    const [h, m] = time.split(':').map(Number);
+    const now = new Date(), target = new Date(now);
+    target.setHours(h, m, 0, 0);
+    if (target <= now) target.setDate(target.getDate() + 1);
+
+    remTimers.current[name] = setTimeout(() => {
+      const myTasks = TASKS.filter(t => getAssigned(t, wk).includes(name));
+      const undone  = myTasks.filter(t =>
+        !comps.some(c => c.id === t.id && c.wk === wKey && c.who === name)
+      );
+      if (Notification.permission === 'granted') {
+        new Notification('Dom.io ⏰ Przypomnienie', {
+          body: undone.length > 0
+            ? `Masz ${undone.length} niezrobion${undone.length===1?'e zadanie':'ych zadań'}!\n${undone.map(t=>t.name).join(' · ')}`
+            : '🎉 Wszystkie zadania zrobione! Świetna robota!',
+          tag: 'daily-reminder',
+        });
+      }
+      const still = reminders[name];
+      if (still?.enabled) scheduleReminderFor(name, still.time);
+    }, target - now);
+  };
+
+  // ── Toast auto-dismiss ────────────────────────
   useEffect(() => {
     if (!toast) return;
-    const t = setTimeout(() => setToast(null), 2500);
+    const t = setTimeout(() => setToast(null), 2400);
     return () => clearTimeout(t);
   }, [toast]);
 
-  const isDone = (id, who) =>
-    comps.some(c => c.id === id && c.wk === wKey && c.who === (who ?? user));
+  // ── Handlers ─────────────────────────────────
+  const handleSetup = () => {
+    setCfgError('');
+    setConnecting(true);
+    try {
+      const cfg = JSON.parse(cfgInput.trim());
+      if (!cfg.apiKey)       { setCfgError('Brakuje pola apiKey.'); setConnecting(false); return; }
+      if (!cfg.databaseURL)  { setCfgError('Brakuje pola databaseURL. Sprawdź czy Realtime Database jest włączone.'); setConnecting(false); return; }
+      if (tryInitFirebase(cfg)) {
+        localStorage.setItem(FB_KEY, JSON.stringify(cfg));
+        bootListeners();
+        setTimeout(() => { setScreen('login'); setConnecting(false); }, 600);
+      } else {
+        setCfgError('Nie udało się połączyć z Firebase. Sprawdź konfigurację i reguły bazy danych.');
+        setConnecting(false);
+      }
+    } catch {
+      setCfgError('Nieprawidłowy JSON. Upewnij się, że skopiowałeś cały obiekt firebaseConfig z Firebase Console.');
+      setConnecting(false);
+    }
+  };
 
-  const getC = (id, who) =>
-    comps.find(c => c.id === id && c.wk === wKey && c.who === (who ?? user));
-
-  const mark = id => {
-    if (!user || isDone(id)) return;
+  const markDone = id => {
+    if (!user || isDone(id) || !db) return;
     const task = TASKS.find(t => t.id === id);
-    setComps(p => [...p, { id, who: user, when: new Date().toISOString(), wk: wKey }]);
+    db.ref('domio/completions').push({ id, who:user, when:new Date().toISOString(), wk:wKey });
     setToast(`✓ ${task?.name}`);
-    if (notif && Notification.permission === "granted")
-      new Notification("Dom.io 🏠", { body: `${user} właśnie wykonał(a): ${task?.name}`, icon: "https://em-content.zobj.net/source/twitter/408/house_1f3e0.png" });
   };
 
-  const enableNotif = () => {
-    if (!("Notification" in window)) { setToast("Ta przeglądarka nie obsługuje powiadomień"); return; }
-    Notification.requestPermission().then(p => {
-      if (p === "granted") { setNotif(true); setToast("🔔 Powiadomienia włączone!"); }
-      else setToast("Odmówiono dostępu do powiadomień");
-    });
+  const enableNotif = async () => {
+    if (!('Notification' in window)) { setToast('Ta przeglądarka nie obsługuje powiadomień'); return; }
+    const p = await Notification.requestPermission();
+    if (p === 'granted') { setNotifOk(true); setToast('🔔 Powiadomienia włączone!'); }
+    else setToast('Odmówiono dostępu do powiadomień.');
   };
 
+  const updateReminder = (enabled, time) => {
+    const updated = { ...reminders, [user]: { enabled, time: time || '20:00' } };
+    setReminders(updated);
+    localStorage.setItem(REM_KEY, JSON.stringify(updated));
+  };
+
+  // ── Query helpers ─────────────────────────────
+  const isDone = (id, who) => comps.some(c => c.id===id && c.wk===wKey && c.who===(who??user));
+  const getC   = (id, who) => comps.find(c => c.id===id && c.wk===wKey && c.who===(who??user));
   const mScore = name => {
     const s = new Date(); s.setDate(1); s.setHours(0,0,0,0);
-    return comps.filter(c => c.who === name && new Date(c.when) >= s).length;
+    return comps.filter(c => c.who===name && new Date(c.when)>=s).length;
   };
+  const myTasks = user ? TASKS.filter(t => getAssigned(t,wk).includes(user)) : [];
 
-  const myTasks = user ? TASKS.filter(t => getAssigned(t, wk).includes(user)) : [];
-  const myDone  = myTasks.filter(t => isDone(t.id)).length;
+  // Shared card style
+  const C = { background:'#fff', border:'1px solid #ebebeb', borderRadius:14, padding:'14px 15px', marginBottom:8 };
 
-  // ── LOGIN ──────────────────────────────
-  if (!user) return (
-    <div className="login-wrap">
-      <div className="login-logo">
-        <h1>Dom.io 🏠</h1>
-        <p>Obowiązki domowe pod kontrolą</p>
+  // ════════════════════════════════════════════════
+  //  LOADING
+  // ════════════════════════════════════════════════
+  if (screen === 'loading') return (
+    <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',flexDirection:'column',gap:16}}>
+      <div className="spinner"/>
+      <div style={{fontSize:13,color:'#aaa'}}>Ładowanie Dom.io…</div>
+    </div>
+  );
+
+  // ════════════════════════════════════════════════
+  //  SETUP
+  // ════════════════════════════════════════════════
+  if (screen === 'setup') return (
+    <div className="setup-wrap">
+      <div style={{textAlign:'center',marginBottom:26}}>
+        <div style={{fontSize:32,marginBottom:6}}>🏠</div>
+        <div style={{fontSize:24,fontWeight:800}}>Dom.io</div>
+        <div style={{fontSize:13,color:'#888',marginTop:4}}>Konfiguracja bazy danych (jednorazowo)</div>
       </div>
 
-      {BROS.map(b => (
-        <div key={b.name}
-          className="card"
-          onClick={() => { setUser(b.name); setPage("dashboard"); }}
-          style={{ cursor:"pointer", display:"flex", alignItems:"center", gap:14,
-            borderLeft:`4px solid ${b.accent}`, transition:"box-shadow 0.15s" }}>
-          <Av name={b.name} size={52} />
-          <div style={{ flex:1 }}>
-            <div style={{ fontWeight:800, fontSize:18 }}>{b.name}</div>
-            <div className="muted small" style={{ marginTop:3 }}>
-              {TASKS.filter(t => getAssigned(t, wk).includes(b.name)).length} zadań w tym tygodniu
-            </div>
+      <div style={{background:'#EFF6FF',border:'1px solid #BFDBFE',borderRadius:14,padding:16,marginBottom:20,fontSize:13,lineHeight:1.8}}>
+        <div style={{fontWeight:800,color:'#1E40AF',marginBottom:10,fontSize:14}}>📋 Jak skonfigurować Firebase (5 min):</div>
+        <div style={{color:'#1E40AF'}}>
+          <b>1.</b> Wejdź na <b>console.firebase.google.com</b><br/>
+          <b>2.</b> "Dodaj projekt" → podaj nazwę np. <em>dom-braci</em><br/>
+          <b>3.</b> Lewe menu → <b>Build → Realtime Database</b> → "Utwórz bazę danych" → Europa<br/>
+          <b>4.</b> Zakładka <b>"Reguły"</b> → wklej poniższe i kliknij "Opublikuj":
+          <div style={{background:'#1E3A8A',color:'#93C5FD',borderRadius:8,padding:'8px 12px',fontFamily:'monospace',fontSize:11,margin:'6px 0',wordBreak:'break-all'}}>
+            {'{ "rules": { ".read": true, ".write": true } }'}
           </div>
-          <div style={{ textAlign:"right" }}>
-            <div style={{ fontSize:22, fontWeight:800, color:b.accent }}>{mScore(b.name)}</div>
-            <div className="small muted">ten miesiąc</div>
-          </div>
+          <b>5.</b> Ikona koła zębatego → <b>Ustawienia projektu</b> → sekcja "Twoje aplikacje" → kliknij <b>&lt;/&gt;</b> → skopiuj cały obiekt <code style={{background:'#DBEAFE',padding:'1px 4px',borderRadius:4}}>firebaseConfig</code><br/>
+          <b>6.</b> Wklej go poniżej i kliknij "Połącz"
         </div>
-      ))}
+      </div>
 
-      <div className="muted small" style={{ textAlign:"center", marginTop:18 }}>
-        Tydzień {wk} · {new Date().toLocaleDateString("pl-PL", { month:"long", year:"numeric" })}
+      <label style={{display:'block',fontWeight:700,fontSize:13,marginBottom:6}}>
+        Konfiguracja Firebase (wklej obiekt JSON):
+      </label>
+      <textarea
+        value={cfgInput}
+        onChange={e => setCfgInput(e.target.value)}
+        spellCheck={false}
+        placeholder={'{\n  "apiKey": "AIzaSy...",\n  "authDomain": "...",\n  "databaseURL": "https://...-rtdb.firebaseio.com",\n  "projectId": "...",\n  "storageBucket": "...",\n  "messagingSenderId": "...",\n  "appId": "..."\n}'}
+        style={{width:'100%',height:170,fontFamily:'monospace',fontSize:12,
+          border:'1px solid #ddd',borderRadius:12,padding:13,resize:'none',color:'#333',background:'#fafafa'}}
+      />
+      {cfgError && <div style={{color:'#DC2626',fontSize:12,marginTop:6,fontWeight:600}}>⚠️ {cfgError}</div>}
+
+      <button onClick={handleSetup} disabled={connecting} style={{
+        width:'100%',marginTop:14,padding:14,background:connecting?'#aaa':'#1D9E75',
+        color:'#fff',borderRadius:12,fontSize:15,fontWeight:800,
+        display:'flex',alignItems:'center',justifyContent:'center',gap:8,
+      }}>
+        {connecting ? <><div className="spinner" style={{width:18,height:18,borderWidth:2}}/> Łączę…</> : 'Połącz z Firebase →'}
+      </button>
+
+      <div style={{textAlign:'center',marginTop:14,fontSize:11,color:'#bbb',lineHeight:1.6}}>
+        Konfigurację wklejają wszyscy bracia raz na swoim urządzeniu.<br/>
+        Dane nie są widoczne publicznie — dostęp ma tylko kto zna link do Twojej bazy.
       </div>
     </div>
   );
 
-  // ── MAIN LAYOUT ───────────────────────
+  // ════════════════════════════════════════════════
+  //  LOGIN
+  // ════════════════════════════════════════════════
+  if (!user) return (
+    <div style={{height:'100vh',overflowY:'auto',padding:'32px 16px 24px'}}>
+      <div style={{textAlign:'center',marginBottom:28}}>
+        <div style={{fontSize:30,fontWeight:800,letterSpacing:'-1px'}}>Dom.io 🏠</div>
+        <div style={{fontSize:13,color:'#888',marginTop:5}}>Kto to?</div>
+        {!online && <div style={{marginTop:8,fontSize:12,color:'#F59E0B',fontWeight:600}}>⚠️ Brak połączenia z internetem</div>}
+      </div>
+
+      {BROS.map(b => {
+        const bTasks = TASKS.filter(t => getAssigned(t,wk).includes(b.name));
+        const bDone  = bTasks.filter(t => isDone(t.id, b.name)).length;
+        return (
+          <div key={b.name} onClick={() => setUser(b.name)} style={{
+            ...C, cursor:'pointer', display:'flex', alignItems:'center', gap:14,
+            borderLeft:`4px solid ${b.accent}`,
+          }}>
+            <Av name={b.name} size={52}/>
+            <div style={{flex:1}}>
+              <div style={{fontWeight:800,fontSize:18}}>{b.name}</div>
+              <div style={{fontSize:12,color:'#888',marginTop:2}}>
+                {bTasks.length} zadań · {bDone} zrobionych
+              </div>
+            </div>
+            <div style={{textAlign:'right'}}>
+              <div style={{fontSize:22,fontWeight:800,color:b.accent}}>{mScore(b.name)}</div>
+              <div style={{fontSize:10,color:'#bbb'}}>ten miesiąc</div>
+            </div>
+          </div>
+        );
+      })}
+
+      <div style={{textAlign:'center',marginTop:16,fontSize:11,color:'#ccc'}}>
+        Tydzień {wk} · {new Date().toLocaleDateString('pl-PL',{month:'long',year:'numeric'})}
+        {online && <span style={{color:'#1D9E75'}}> · 🔥 online</span>}
+      </div>
+    </div>
+  );
+
+  // ════════════════════════════════════════════════
+  //  MAIN APP
+  // ════════════════════════════════════════════════
+  const myDone = myTasks.filter(t => isDone(t.id)).length;
+  const uRem   = reminders[user] || { enabled:false, time:'20:00' };
+
   return (
     <>
       {/* Toast */}
@@ -240,106 +423,114 @@ function App() {
 
       {/* Header */}
       <div className="header">
-        <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-          <Av name={user} size={32} />
+        <div style={{display:'flex',alignItems:'center',gap:10}}>
+          <Av name={user} size={32}/>
           <div>
-            <div style={{ fontWeight:700, fontSize:15 }}>{user}</div>
-            <div className="small muted">
-              {page === "mine"
-                ? `${myDone}/${myTasks.length} zrobionych`
+            <div style={{fontWeight:800,fontSize:14,display:'flex',alignItems:'center',gap:6}}>
+              {user}
+              {online
+                ? <span style={{fontSize:9,color:'#1D9E75',fontWeight:600,background:'#E1F5EE',padding:'1px 6px',borderRadius:99}}>🔥 LIVE</span>
+                : <span style={{fontSize:9,color:'#F59E0B',fontWeight:600,background:'#FFFBEB',padding:'1px 6px',borderRadius:99}}>⚠️ offline</span>}
+            </div>
+            <div style={{fontSize:10,color:'#aaa'}}>
+              {page==='mine'
+                ? `${myDone}/${myTasks.length} zrobionych w tygodniu ${wk}`
                 : `Tydzień ${wk}`}
             </div>
           </div>
         </div>
-        <div style={{ display:"flex", gap:6 }}>
-          <button onClick={notif ? undefined : enableNotif}
-            title={notif ? "Powiadomienia aktywne" : "Włącz powiadomienia"}
-            style={{ padding:"6px 10px", border:`1px solid ${notif ? ub.accent : "#ddd"}`,
-              borderRadius:10, background: notif ? ub.light : "transparent",
-              fontSize:16, color: notif ? ub.dark : "#999" }}>
-            {notif ? "🔔" : "🔕"}
+        <div style={{display:'flex',gap:5}}>
+          <button onClick={notifOk ? undefined : enableNotif}
+            title={notifOk ? 'Powiadomienia aktywne' : 'Włącz powiadomienia'}
+            style={{padding:'6px 9px',border:`1px solid ${notifOk?ub.accent:'#ddd'}`,
+              borderRadius:10,background:notifOk?ub.light:'transparent',fontSize:16,
+              color:notifOk?ub.dark:'#bbb'}}>
+            {notifOk ? '🔔' : '🔕'}
           </button>
-          <button onClick={() => setUser(null)}
-            style={{ padding:"6px 11px", border:"1px solid #ddd", borderRadius:10,
-              background:"transparent", fontSize:12, fontWeight:600, color:"#888" }}>
+          <button onClick={() => { setUser(null); setPage('dashboard'); }}
+            style={{padding:'6px 11px',border:'1px solid #ddd',borderRadius:10,
+              background:'transparent',fontSize:12,fontWeight:700,color:'#888'}}>
             Zmień
           </button>
         </div>
       </div>
 
-      {/* ── DASHBOARD ─────────────────── */}
-      {page === "dashboard" && (
-        <div className="content">
-          {/* Summary row */}
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:7, marginBottom:12 }}>
+      {/* ──── DASHBOARD ──── */}
+      {page === 'dashboard' && (
+        <div className="scroll">
+          {/* Brother progress cards */}
+          <div style={{display:'grid',gridTemplateColumns:'repeat(3, 1fr)',gap:7,marginBottom:12}}>
             {BROS.map(b => {
-              const bt = TASKS.filter(t => getAssigned(t, wk).includes(b.name));
+              const bt = TASKS.filter(t => getAssigned(t,wk).includes(b.name));
               const bd = bt.filter(t => isDone(t.id, b.name)).length;
+              const pct = bt.length ? Math.round((bd/bt.length)*100) : 0;
               return (
-                <div key={b.name} style={{ background:"#fff", border:"1px solid #ebebeb",
-                  borderTop:`4px solid ${b.accent}`, borderRadius:14,
-                  padding:"10px 8px", textAlign:"center" }}>
-                  <div style={{ display:"flex", justifyContent:"center" }}><Av name={b.name} size={26}/></div>
-                  <div style={{ fontWeight:700, fontSize:13, marginTop:5 }}>{b.name}</div>
-                  <div className="small" style={{ color: bd===bt.length ? "#0A5E41" : "#aaa" }}>
+                <div key={b.name} style={{background:'#fff',border:'1px solid #ebebeb',
+                  borderTop:`4px solid ${b.accent}`,borderRadius:14,padding:'10px 8px',textAlign:'center'}}>
+                  <div style={{display:'flex',justifyContent:'center',marginBottom:4}}>
+                    <Av name={b.name} size={26}/>
+                  </div>
+                  <div style={{fontWeight:700,fontSize:12}}>{b.name}</div>
+                  <div style={{fontSize:11,fontWeight:700,
+                    color:bd===bt.length&&bt.length>0?'#0A5E41':'#aaa',marginTop:1}}>
                     {bd}/{bt.length}
+                  </div>
+                  <div className="bar-track" style={{marginTop:4}}>
+                    <div className="bar-fill" style={{width:`${pct}%`,background:b.accent}}/>
                   </div>
                 </div>
               );
             })}
           </div>
 
-          {/* Task list */}
+          {/* Tasks */}
           {TASKS.map(task => {
-            const resp     = getAssigned(task, wk);
-            const isAll    = task.assign === "all";
-            const doneWho  = BROS.filter(b => isDone(task.id, b.name));
-            const allDone  = isAll ? doneWho.length === BROS.length : doneWho.length > 0;
-            const sComp    = !isAll && doneWho[0] ? getC(task.id, doneWho[0].name) : null;
-            const assignedColor = !isAll && resp.length === 1 ? getBro(resp[0]).accent : "#ddd";
-
+            const resp    = getAssigned(task, wk);
+            const isAll   = task.assign === 'all';
+            const doneWho = BROS.filter(b => isDone(task.id, b.name));
+            const allDone = isAll ? doneWho.length === BROS.length : doneWho.length > 0;
+            const sComp   = !isAll && doneWho[0] ? getC(task.id, doneWho[0].name) : null;
+            const lColor  = allDone ? '#1D9E75' : (resp.length===1 ? getBro(resp[0]).accent : '#e0e0e0');
             return (
-              <div key={task.id} className="card-sm"
-                style={{ display:"flex", alignItems:"center", gap:10,
-                  borderLeft:`4px solid ${allDone ? "#1D9E75" : assignedColor}`,
-                  opacity: allDone ? 0.5 : 1 }}>
-                <div className="icon-box"
-                  style={{ background: allDone ? "#E1F5EE" : "#f5f5f5",
-                    fontSize: allDone ? 16 : 19 }}>
-                  {allDone ? "✓" : task.icon}
+              <div key={task.id} style={{...C,display:'flex',alignItems:'center',gap:10,
+                borderLeft:`4px solid ${lColor}`,opacity:allDone?0.45:1}}>
+                <div style={{width:38,height:38,borderRadius:11,flexShrink:0,
+                  background:allDone?'#E1F5EE':'#f5f5f5',display:'flex',
+                  alignItems:'center',justifyContent:'center',fontSize:allDone?16:19}}>
+                  {allDone ? '✓' : task.icon}
                 </div>
-                <div style={{ flex:1, minWidth:0 }}>
-                  <div style={{ fontWeight:700, fontSize:13,
-                    color: allDone ? "#aaa" : "#1a1a1a",
-                    textDecoration: allDone ? "line-through" : "none",
-                    marginBottom:3 }}>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontWeight:700,fontSize:13,marginBottom:3,
+                    color:allDone?'#bbb':'#1a1a1a',
+                    textDecoration:allDone?'line-through':'none'}}>
                     {task.name}
                   </div>
                   {isAll ? (
-                    <div style={{ display:"flex", gap:3, flexWrap:"wrap" }}>
+                    <div style={{display:'flex',gap:3,flexWrap:'wrap'}}>
                       {BROS.map(b => {
                         const bd = isDone(task.id, b.name);
+                        const bc = bd ? getC(task.id, b.name) : null;
                         return (
-                          <span key={b.name} className="pill"
-                            style={{ background: bd ? b.light : "#f5f5f5",
-                              color: bd ? b.dark : "#aaa",
-                              border: `1px solid ${bd ? b.accent : "#e8e8e8"}` }}>
-                            {bd && "✓ "}{b.name}
+                          <span key={b.name} className="badge" style={{
+                            background:bd?b.light:'#f5f5f5',
+                            color:bd?b.dark:'#ccc',
+                            border:`1px solid ${bd?b.accent:'#ebebeb'}`}}>
+                            {bd&&'✓ '}{b.name}
                           </span>
                         );
                       })}
                     </div>
                   ) : (
-                    <div style={{ display:"flex", alignItems:"center", gap:7 }}>
+                    <div style={{display:'flex',alignItems:'center',gap:6}}>
                       {resp.map(n => (
-                        <div key={n} style={{ display:"flex", alignItems:"center", gap:3 }}>
+                        <div key={n} style={{display:'flex',alignItems:'center',gap:3}}>
                           <Av name={n} size={16}/>
-                          <span className="small muted">{n}</span>
+                          <span style={{fontSize:11,color:'#888'}}>{n}</span>
                         </div>
                       ))}
                       {sComp && (
-                        <span className="small" style={{ color:"#0A5E41" }}>
-                          · {fmt(sComp.when)}
+                        <span style={{fontSize:10,color:'#0A5E41',marginLeft:2}}>
+                          · {fmtRelative(sComp.when)}
                         </span>
                       )}
                     </div>
@@ -351,43 +542,41 @@ function App() {
         </div>
       )}
 
-      {/* ── MOJE ZADANIA ──────────────── */}
-      {page === "mine" && (
-        <div className="content">
+      {/* ──── MOJE ZADANIA ──── */}
+      {page === 'mine' && (
+        <div className="scroll">
           {myTasks.length === 0 ? (
-            <div className="card" style={{ textAlign:"center", padding:"40px 16px" }}>
-              <div style={{ fontSize:40, marginBottom:12 }}>🎉</div>
-              <div style={{ fontWeight:700, fontSize:16 }}>Ten tydzień masz wolny!</div>
-              <div className="muted small" style={{ marginTop:6 }}>Odpoczywaj, zasłużyłeś.</div>
+            <div style={{...C,textAlign:'center',padding:'44px 16px'}}>
+              <div style={{fontSize:40,marginBottom:14}}>🎉</div>
+              <div style={{fontWeight:800,fontSize:17}}>Ten tydzień masz wolny!</div>
+              <div style={{fontSize:13,color:'#aaa',marginTop:6}}>Zasłużyłeś na odpoczynek.</div>
             </div>
           ) : myTasks.map(task => {
             const d = isDone(task.id);
             const c = d ? getC(task.id) : null;
             return (
-              <div key={task.id} className="card"
-                style={{ display:"flex", alignItems:"center", gap:13,
-                  borderLeft:`4px solid ${d ? "#1D9E75" : ub.accent}`,
-                  opacity: d ? 0.55 : 1 }}>
-                <div className="icon-box"
-                  style={{ width:44, height:44, background: d ? "#E1F5EE" : ub.light,
-                    fontSize: d ? 18 : 22, color: d ? "#0A5E41" : ub.dark }}>
-                  {d ? "✓" : task.icon}
+              <div key={task.id} style={{...C,display:'flex',alignItems:'center',gap:13,
+                borderLeft:`4px solid ${d?'#1D9E75':ub.accent}`,opacity:d?0.5:1}}>
+                <div style={{width:44,height:44,borderRadius:12,flexShrink:0,
+                  background:d?'#E1F5EE':ub.light,display:'flex',alignItems:'center',
+                  justifyContent:'center',fontSize:d?18:22,color:d?'#0A5E41':ub.dark}}>
+                  {d ? '✓' : task.icon}
                 </div>
-                <div style={{ flex:1, minWidth:0 }}>
-                  <div style={{ fontWeight:700, fontSize:15, marginBottom:3,
-                    color: d ? "#aaa" : "#1a1a1a",
-                    textDecoration: d ? "line-through" : "none" }}>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontWeight:700,fontSize:15,marginBottom:3,
+                    color:d?'#aaa':'#1a1a1a',textDecoration:d?'line-through':'none'}}>
                     {task.name}
                   </div>
-                  <div className="small muted">
-                    {c ? `Zrobione: ${fmt(c.when)}` : task.note}
+                  <div style={{fontSize:11,color:'#aaa'}}>
+                    {c ? `Zrobione ${fmtRelative(c.when)}` : task.note}
                   </div>
                 </div>
                 {!d && (
-                  <button onClick={() => mark(task.id)}
-                    style={{ background:ub.accent, color:"#fff", border:"none",
-                      borderRadius:11, padding:"9px 14px", fontSize:13, fontWeight:800,
-                      display:"flex", alignItems:"center", gap:5, flexShrink:0 }}>
+                  <button onClick={() => markDone(task.id)} style={{
+                    background:ub.accent,color:'#fff',border:'none',
+                    borderRadius:11,padding:'9px 13px',fontSize:13,fontWeight:800,
+                    display:'flex',alignItems:'center',gap:4,flexShrink:0,
+                  }}>
                     ✓ Gotowe
                   </button>
                 )}
@@ -397,86 +586,175 @@ function App() {
         </div>
       )}
 
-      {/* ── WYNIKI ────────────────────── */}
-      {page === "scores" && (() => {
-        const sorted = [...BROS].sort((a,b) => mScore(b.name) - mScore(a.name));
+      {/* ──── WYNIKI ──── */}
+      {page === 'scores' && (() => {
+        const sorted = [...BROS].sort((a,b) => mScore(b.name)-mScore(a.name));
         const maxS   = Math.max(...BROS.map(b => mScore(b.name)), 1);
-        const recent = [...comps].sort((a,b) => new Date(b.when) - new Date(a.when)).slice(0, 25);
-        const medals = ["🥇","🥈","🥉"];
-        const month  = new Date().toLocaleDateString("pl-PL", { month:"long", year:"numeric" });
-
+        const recent = [...comps].sort((a,b) => new Date(b.when)-new Date(a.when)).slice(0,25);
+        const medals = ['🥇','🥈','🥉'];
         return (
-          <div className="content">
-            <div className="muted small" style={{ marginBottom:10, textTransform:"capitalize" }}>
-              Wyniki · {month}
+          <div className="scroll">
+            <div style={{fontSize:12,color:'#bbb',marginBottom:10,textTransform:'capitalize'}}>
+              Wyniki · {new Date().toLocaleDateString('pl-PL',{month:'long',year:'numeric'})}
             </div>
 
-            {/* Ranking */}
-            <div className="card" style={{ marginBottom:14 }}>
-              {sorted.map((b, i) => (
-                <div key={b.name} style={{ display:"flex", alignItems:"center", gap:10,
-                  padding:"11px 0",
-                  borderBottom: i < 2 ? "1px solid #f0f0f0" : "none" }}>
-                  <span style={{ fontSize:20, width:24, textAlign:"center", flexShrink:0 }}>{medals[i]}</span>
+            <div style={{...C,marginBottom:14}}>
+              {sorted.map((b,i) => (
+                <div key={b.name} style={{display:'flex',alignItems:'center',gap:10,padding:'11px 0',
+                  borderBottom:i<2?'1px solid #f0f0f0':'none'}}>
+                  <span style={{fontSize:20,width:26,textAlign:'center'}}>{medals[i]}</span>
                   <Av name={b.name} size={34}/>
-                  <div style={{ flex:1 }}>
-                    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:5 }}>
-                      <span style={{ fontWeight:700, fontSize:14 }}>{b.name}</span>
-                      <span style={{ fontSize:16, fontWeight:800, color:b.accent }}>{mScore(b.name)}</span>
+                  <div style={{flex:1}}>
+                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:5}}>
+                      <span style={{fontWeight:700,fontSize:14}}>{b.name}</span>
+                      <span style={{fontSize:16,fontWeight:800,color:b.accent}}>{mScore(b.name)}</span>
                     </div>
                     <div className="bar-track">
-                      <div className="bar-fill" style={{ width:`${Math.round((mScore(b.name)/maxS)*100)}%`, background:b.accent }}/>
+                      <div className="bar-fill" style={{width:`${Math.round((mScore(b.name)/maxS)*100)}%`,background:b.accent}}/>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Activity feed */}
-            <div className="small muted" style={{ marginBottom:8 }}>Ostatnia aktywność</div>
-            {recent.length === 0 ? (
-              <div className="card" style={{ textAlign:"center", padding:"24px", color:"#aaa" }}>
-                Brak aktywności — czas wziąć się do pracy 🧹
-              </div>
-            ) : recent.map((c, i) => {
-              const task = TASKS.find(t => t.id === c.id);
-              return (
-                <div key={i} className="card-sm" style={{ display:"flex", alignItems:"center", gap:10 }}>
-                  <Av name={c.who} size={28}/>
-                  <div style={{ flex:1 }}>
-                    <span style={{ fontWeight:700, fontSize:13 }}>{c.who}</span>
-                    <span style={{ fontSize:13, color:"#555" }}> — {task?.name || c.id}</span>
-                    <div className="small muted" style={{ marginTop:1 }}>{fmt(c.when)}</div>
-                  </div>
-                  <span style={{ fontSize:18 }}>{task?.icon || "📋"}</span>
-                </div>
-              );
-            })}
+            <div style={{fontSize:12,color:'#bbb',marginBottom:8}}>Ostatnia aktywność</div>
+            {recent.length === 0
+              ? <div style={{...C,textAlign:'center',color:'#ccc',fontSize:13,padding:'24px'}}>Brak aktywności — czas wziąć się do pracy 🧹</div>
+              : recent.map((c,i) => {
+                  const task = TASKS.find(t => t.id === c.id);
+                  return (
+                    <div key={i} className="card-sm" style={{display:'flex',alignItems:'center',gap:10}}>
+                      <Av name={c.who} size={28}/>
+                      <div style={{flex:1}}>
+                        <span style={{fontWeight:700,fontSize:13}}>{c.who}</span>
+                        <span style={{fontSize:13,color:'#555'}}> — {task?.name||c.id}</span>
+                        <div style={{fontSize:11,color:'#bbb',marginTop:1}}>{fmtRelative(c.when)}</div>
+                      </div>
+                      <span style={{fontSize:18}}>{task?.icon||'📋'}</span>
+                    </div>
+                  );
+                })
+            }
           </div>
         );
       })()}
 
+      {/* ──── USTAWIENIA ──── */}
+      {page === 'settings' && (
+        <div className="scroll">
+
+          {/* Notifications */}
+          <div style={{...C,marginBottom:10}}>
+            <div style={{fontWeight:800,fontSize:15,marginBottom:14}}>🔔 Powiadomienia push</div>
+
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:notifOk?0:12}}>
+              <div>
+                <div style={{fontWeight:700,fontSize:14}}>Gdy brat zrobi zadanie</div>
+                <div style={{fontSize:12,color:'#aaa',marginTop:2}}>
+                  {notifOk ? '✓ Aktywne — strona musi być otwarta' : 'Wyłączone'}
+                </div>
+              </div>
+              <button onClick={notifOk ? undefined : enableNotif} style={{
+                padding:'8px 14px',border:`1px solid ${notifOk?ub.accent:'#ddd'}`,
+                borderRadius:10,background:notifOk?ub.light:'transparent',
+                fontSize:13,fontWeight:700,color:notifOk?ub.dark:'#555',
+                cursor:notifOk?'default':'pointer',
+              }}>
+                {notifOk ? '✓ Włączone' : 'Włącz'}
+              </button>
+            </div>
+
+            {!notifOk && (
+              <div style={{background:'#FFFBEB',border:'1px solid #FDE68A',borderRadius:10,
+                padding:'10px 12px',fontSize:12,color:'#92400E'}}>
+                💡 Włącz powiadomienia, żeby dowiadywać się na bieżąco co robią Bartek, Kuba i Mikołaj — i żeby działały przypomnienia.
+              </div>
+            )}
+          </div>
+
+          {/* Reminders */}
+          <div style={{...C,marginBottom:10}}>
+            <div style={{fontWeight:800,fontSize:15,marginBottom:14}}>⏰ Codzienne przypomnienie</div>
+
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}}>
+              <div>
+                <div style={{fontWeight:700,fontSize:14}}>Przypomnienie o zadaniach</div>
+                <div style={{fontSize:12,color:'#aaa',marginTop:2}}>
+                  {uRem.enabled ? `Aktywne · ${uRem.time} każdego dnia` : 'Wyłączone'}
+                </div>
+              </div>
+              <div className="toggle"
+                style={{background:uRem.enabled?ub.accent:'#ddd'}}
+                onClick={() => {
+                  if (!notifOk && !uRem.enabled) { enableNotif(); }
+                  updateReminder(!uRem.enabled, uRem.time);
+                }}>
+                <div className="toggle-knob" style={{left:uRem.enabled?23:3}}/>
+              </div>
+            </div>
+
+            {uRem.enabled && (
+              <>
+                <label style={{display:'block',fontSize:13,fontWeight:700,marginBottom:6}}>
+                  Godzina przypomnienia:
+                </label>
+                <input type="time" value={uRem.time}
+                  onChange={e => updateReminder(true, e.target.value)}
+                  style={{width:'100%',padding:'10px 14px',border:'1px solid #ddd',
+                    borderRadius:10,fontSize:16,fontFamily:'Nunito, sans-serif',color:'#1a1a1a'}}
+                />
+                <div style={{fontSize:12,color:'#bbb',marginTop:10,lineHeight:1.6}}>
+                  ℹ️ Przypomnienie działa gdy strona jest otwarta w przeglądarce.<br/>
+                  Aby działało w tle: zainstaluj aplikację ("Dodaj do ekranu głównego") i włącz powiadomienia dla niej.
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Firebase status */}
+          <div style={{...C}}>
+            <div style={{fontWeight:800,fontSize:15,marginBottom:12}}>🔥 Firebase — dane w chmurze</div>
+            <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:12}}>
+              <span className="dot" style={{background:online?'#1D9E75':'#F59E0B'}}/>
+              <span style={{fontSize:13,fontWeight:600,color:online?'#1D9E75':'#F59E0B'}}>
+                {online ? 'Połączono — dane synchronizują się w czasie rzeczywistym' : 'Offline — brak połączenia'}
+              </span>
+            </div>
+            <div style={{fontSize:12,color:'#aaa',marginBottom:12}}>
+              Wszyscy bracia widzą te same dane. Zaznaczenie zadania natychmiast pojawia się na telefonie innych.
+            </div>
+            <button
+              onClick={() => { if (window.confirm('Na pewno? Trzeba będzie ponownie wkleić konfigurację Firebase.')) { localStorage.removeItem(FB_KEY); window.location.reload(); }}}
+              style={{width:'100%',padding:'10px',border:'1px solid #FCA5A5',
+                borderRadius:10,background:'#FFF5F5',fontSize:13,fontWeight:700,color:'#DC2626'}}>
+              Resetuj konfigurację Firebase
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Bottom Nav */}
-      <nav className="bottom-nav">
+      <div className="bottom-nav">
         {[
-          { id:"dashboard", label:"Przegląd",    ico:"🏠" },
-          { id:"mine",      label:"Moje zadania", ico:"✅" },
-          { id:"scores",    label:"Wyniki",       ico:"🏆" },
-        ].map(({ id, label, ico }) => (
-          <button key={id} className="nav-btn" onClick={() => setPage(id)}
-            style={{ color: page===id ? ub.accent : "#aaa",
-              borderTop: page===id ? `3px solid ${ub.accent}` : "3px solid transparent",
-              fontWeight: page===id ? 700 : 500 }}>
-            <span className="ico">{ico}</span>
+          {id:'dashboard',label:'Przegląd',ico:'🏠'},
+          {id:'mine',     label:'Moje',    ico:'✅'},
+          {id:'scores',   label:'Wyniki',  ico:'🏆'},
+          {id:'settings', label:'Ustaw.',  ico:'⚙️'},
+        ].map(({id,label,ico}) => (
+          <button key={id} className="nav-btn" onClick={() => setPage(id)} style={{
+            color:page===id?ub.accent:'#ccc',
+            borderTop:page===id?`3px solid ${ub.accent}`:'3px solid transparent',
+          }}>
+            <span style={{fontSize:21}}>{ico}</span>
             {label}
           </button>
         ))}
-      </nav>
+      </div>
     </>
   );
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
 </html>
