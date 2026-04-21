@@ -114,6 +114,17 @@ const fmtRelative = iso => {
 const FB_KEY = 'domio-firebase-cfg-v3';
 const REM_KEY = 'domio-reminders-v2';
 
+// ← Config wbudowany — bracia nie muszą nic wklejać
+const HARDCODED_CONFIG = {
+  apiKey: "AIzaSyACkSuZ_K14NFIbYj9YDXxXDJY9wDY3hcc",
+  authDomain: "domio-7ebcd.firebaseapp.com",
+  databaseURL: "https://domio-7ebcd-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "domio-7ebcd",
+  storageBucket: "domio-7ebcd.firebasestorage.app",
+  messagingSenderId: "636583182165",
+  appId: "1:636583182165:web:776f117677b880bebd39dc"
+};
+
 let db = null, fbApp = null;
 
 function tryInitFirebase(config) {
@@ -168,13 +179,10 @@ function App() {
 
   // ── Boot ─────────────────────────────────────
   useEffect(() => {
-    const saved = localStorage.getItem(FB_KEY);
-    if (saved) {
-      try {
-        const cfg = JSON.parse(saved);
-        if (tryInitFirebase(cfg)) { bootListeners(); setScreen('login'); }
-        else setScreen('setup');
-      } catch { setScreen('setup'); }
+    const cfg = HARDCODED_CONFIG;
+    if (tryInitFirebase(cfg)) {
+      bootListeners();
+      setScreen('login');
     } else {
       setScreen('setup');
     }
