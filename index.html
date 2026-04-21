@@ -5,9 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <meta name="theme-color" content="#ffffff">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Dom.io">
   <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>Dom.io 🏠</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -16,44 +19,37 @@
     body { font-family: 'Nunito', sans-serif; background: #f8f6f2; color: #1a1a1a; }
     #root { max-width: 480px; margin: 0 auto; height: 100vh; display: flex; flex-direction: column; background: #fff; overflow: hidden; position: relative; }
     .scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 12px 12px 80px; }
-    .card { background: #fff; border: 1px solid #ebebeb; border-radius: 14px; padding: 14px 15px; margin-bottom: 8px; }
+    .card  { background: #fff; border: 1px solid #ebebeb; border-radius: 14px; padding: 14px 15px; margin-bottom: 8px; }
     .card-sm { background: #fff; border: 1px solid #ebebeb; border-radius: 12px; padding: 10px 13px; margin-bottom: 7px; }
-    button { font-family: 'Nunito', sans-serif; cursor: pointer; transition: transform .1s, opacity .1s; border: none; }
+    button { font-family: 'Nunito', sans-serif; cursor: pointer; transition: transform .1s; border: none; }
     button:active { transform: scale(0.96); }
-    .toast { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: #fff; border-radius: 24px; padding: 9px 20px; font-size: 13px; font-weight: 700; z-index: 999; white-space: nowrap; }
     .header { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; border-bottom: 1px solid #ebebeb; background: #fff; flex-shrink: 0; }
     .bottom-nav { display: flex; border-top: 1px solid #ebebeb; background: #fff; flex-shrink: 0; padding-bottom: env(safe-area-inset-bottom, 0); }
-    .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 0 10px; background: transparent; font-family: 'Nunito', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: .3px; }
+    .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 0 10px; background: transparent; font-family: 'Nunito', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: .3px; position: relative; }
     .av { border-radius: 50%; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .badge { display: inline-flex; align-items: center; gap: 2px; font-size: 10px; padding: 2px 7px; border-radius: 99px; }
-    .toggle { width: 46px; height: 26px; border-radius: 13px; position: relative; cursor: pointer; transition: background .2s; }
+    .toggle { width: 46px; height: 26px; border-radius: 13px; position: relative; cursor: pointer; transition: background .2s; flex-shrink: 0; }
     .toggle-knob { width: 20px; height: 20px; border-radius: 50%; background: #fff; position: absolute; top: 3px; transition: left .2s; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
     .bar-track { height: 5px; background: #f0f0f0; border-radius: 3px; overflow: hidden; }
-    .bar-fill { height: 100%; border-radius: 3px; transition: width .4s ease; }
-    .setup-wrap { height: 100vh; overflow-y: auto; padding: 28px 18px 40px; }
-    textarea:focus, input:focus { outline: 2px solid #1D9E75; }
-    .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 5px; }
-    .spinner { width: 28px; height: 28px; border: 3px solid #f0f0f0; border-top: 3px solid #1D9E75; border-radius: 50%; animation: spin .7s linear infinite; }
+    .bar-fill  { height: 100%; border-radius: 3px; transition: width .4s ease; }
+    .toast { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: #fff; border-radius: 24px; padding: 9px 20px; font-size: 13px; font-weight: 700; z-index: 999; white-space: nowrap; pointer-events: none; }
+    .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 200; display: flex; align-items: flex-end; justify-content: center; }
+    .modal-box { background: #fff; border-radius: 22px 22px 0 0; padding: 20px 18px 36px; width: 100%; max-width: 480px; }
+    .notif-dot { position: absolute; top: 6px; right: 18px; width: 8px; height: 8px; border-radius: 50%; background: #EF4444; border: 2px solid #fff; }
+    .spinner { width: 24px; height: 24px; border: 3px solid #f0f0f0; border-top: 3px solid #1D9E75; border-radius: 50%; animation: spin .7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
 <div id="root"></div>
 
-<!-- Service Worker -->
 <script>
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js').catch(() => {});
-    });
+    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
   }
 </script>
-
-<!-- Firebase 10 compat -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-
-<!-- React 18 -->
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -62,59 +58,8 @@
 const { useState, useEffect, useRef, useCallback } = React;
 
 // ═══════════════════════════════════════════════
-//  DATA
+//  CONFIG — wbudowany, bracia nie muszą nic wklejać
 // ═══════════════════════════════════════════════
-const BROS = [
-  { name:'Bartek',  init:'B', accent:'#EF9F27', light:'#FAEEDA', dark:'#8C5A0E' },
-  { name:'Kuba',    init:'K', accent:'#1D9E75', light:'#E1F5EE', dark:'#0A5E41' },
-  { name:'Mikołaj', init:'M', accent:'#378ADD', light:'#E6F1FB', dark:'#0E4A87' },
-];
-
-const TASKS = [
-  { id:'zmywanie',    name:'Zmywanie naczyń',    icon:'🍽️', assign:'rot3',    note:'Codziennie po kolacji' },
-  { id:'odkurzanie',  name:'Odkurzanie',          icon:'🧹', assign:'rot3',    note:'Raz w tygodniu' },
-  { id:'smieci',      name:'Wynoszenie śmieci',   icon:'🗑️', assign:'rot3',    note:'Wtorek i piątek' },
-  { id:'laz-wspolna', name:'Łazienka wspólna',    icon:'🚿', assign:'rot2km',  note:'Kuba / Mikołaj co tydzień' },
-  { id:'laz-bartek',  name:'Łazienka Bartka',     icon:'🛁', assign:['Bartek'],note:'Tylko Bartek' },
-  { id:'salon',       name:'Sprzątanie salonu',   icon:'🛋️', assign:'rot3',    note:'Raz w tygodniu' },
-  { id:'pranie',      name:'Pranie',              icon:'👕', assign:'rot3',    note:'Raz w tygodniu' },
-  { id:'wieszanie',   name:'Wieszanie prania',    icon:'🪣', assign:'rot3',    note:'Po każdym praniu' },
-  { id:'kuchenka',    name:'Mycie kuchenki',      icon:'🍳', assign:'rot3',    note:'Raz w tygodniu' },
-  { id:'zakupy',      name:'Zakupy',              icon:'🛒', assign:'rot3',    note:'Raz w tygodniu' },
-  { id:'generalne',   name:'Generalne sprzątanie',icon:'✨', assign:'all',     note:'Co 2 tyg. — podłogi + okna' },
-];
-
-// ═══════════════════════════════════════════════
-//  HELPERS
-// ═══════════════════════════════════════════════
-const getBro = n => BROS.find(b => b.name === n) || BROS[0];
-const getAssigned = (task, wk) => {
-  if (task.assign === 'rot3')   return [BROS[wk % 3].name];
-  if (task.assign === 'rot2km') return [wk % 2 === 0 ? 'Kuba' : 'Mikołaj'];
-  if (task.assign === 'all')    return BROS.map(b => b.name);
-  return task.assign;
-};
-const getWeek = () => {
-  const d = new Date(), s = new Date(d.getFullYear(), 0, 1);
-  return Math.ceil(((d - s) / 86400000 + s.getDay() + 1) / 7);
-};
-const fmt = iso => {
-  const d = new Date(iso);
-  return d.toLocaleDateString('pl-PL',{day:'numeric',month:'short'}) + ' ' +
-    d.toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit'});
-};
-const fmtRelative = iso => {
-  const diff = Date.now() - new Date(iso);
-  if (diff < 60000)  return 'przed chwilą';
-  if (diff < 3600000) return `${Math.floor(diff/60000)} min temu`;
-  if (diff < 86400000) return `${Math.floor(diff/3600000)} godz. temu`;
-  return fmt(iso);
-};
-
-const FB_KEY = 'domio-firebase-cfg-v3';
-const REM_KEY = 'domio-reminders-v2';
-
-// ← Config wbudowany — bracia nie muszą nic wklejać
 const HARDCODED_CONFIG = {
   apiKey: "AIzaSyACkSuZ_K14NFIbYj9YDXxXDJY9wDY3hcc",
   authDomain: "domio-7ebcd.firebaseapp.com",
@@ -125,13 +70,69 @@ const HARDCODED_CONFIG = {
   appId: "1:636583182165:web:776f117677b880bebd39dc"
 };
 
-let db = null, fbApp = null;
+const FB_KEY  = 'domio-firebase-cfg-v3';
+const REM_KEY = 'domio-reminders-v2';
 
-function tryInitFirebase(config) {
+// ═══════════════════════════════════════════════
+//  DANE
+// ═══════════════════════════════════════════════
+const BROS = [
+  { name:'Bartek',  init:'B', accent:'#EF9F27', light:'#FAEEDA', dark:'#8C5A0E' },
+  { name:'Kuba',    init:'K', accent:'#1D9E75', light:'#E1F5EE', dark:'#0A5E41' },
+  { name:'Mikołaj', init:'M', accent:'#378ADD', light:'#E6F1FB', dark:'#0E4A87' },
+];
+
+// rot3i = indeks rotacji (każde zadanie obraca się osobno → ~3 zadania/tydzień/brat)
+const TASKS = [
+  { id:'zmywanie',    name:'Zmywanie naczyń',    icon:'🍽️', assign:'rot3', rot3i:0, note:'Codziennie po kolacji' },
+  { id:'odkurzanie',  name:'Odkurzanie',          icon:'🧹', assign:'rot3', rot3i:1, note:'Raz w tygodniu' },
+  { id:'smieci',      name:'Wynoszenie śmieci',   icon:'🗑️', assign:'rot3', rot3i:2, note:'Wtorek i piątek' },
+  { id:'laz-wspolna', name:'Łazienka wspólna',    icon:'🚿', assign:'rot2km',        note:'Kuba / Mikołaj na zmianę' },
+  { id:'laz-bartek',  name:'Łazienka Bartka',     icon:'🛁', assign:['Bartek'],      note:'Tylko Bartek' },
+  { id:'salon',       name:'Sprzątanie salonu',   icon:'🛋️', assign:'rot3', rot3i:3, note:'Raz w tygodniu' },
+  { id:'pranie',      name:'Pranie',              icon:'👕', assign:'rot3', rot3i:4, note:'Raz w tygodniu' },
+  { id:'wieszanie',   name:'Wieszanie prania',    icon:'🪣', assign:'rot3', rot3i:5, note:'Po każdym praniu' },
+  { id:'kuchenka',    name:'Mycie kuchenki',      icon:'🍳', assign:'rot3', rot3i:6, note:'Raz w tygodniu' },
+  { id:'generalne',   name:'Generalne sprzątanie',icon:'✨', assign:'all',           note:'Co 2 tyg. — podłogi + okna' },
+];
+
+// ═══════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════
+const getBro = n => BROS.find(b => b.name === n) || BROS[0];
+
+// Każde rot3 zadanie rotuje niezależnie → równy podział co tydzień
+const getAssigned = (task, wk, swaps = {}) => {
+  const sw = swaps[task.id];
+  if (sw?.status === 'accepted') return [sw.to];
+  if (task.assign === 'rot3')   return [BROS[(task.rot3i + wk) % 3].name];
+  if (task.assign === 'rot2km') return [wk % 2 === 0 ? 'Kuba' : 'Mikołaj'];
+  if (task.assign === 'all')    return BROS.map(b => b.name);
+  return task.assign;
+};
+
+const getWeek = () => {
+  const d = new Date(), s = new Date(d.getFullYear(), 0, 1);
+  return Math.ceil(((d - s) / 86400000 + s.getDay() + 1) / 7);
+};
+const fmt = iso => {
+  const d = new Date(iso);
+  return d.toLocaleDateString('pl-PL', {day:'numeric', month:'short'}) + ' ' +
+    d.toLocaleTimeString('pl-PL', {hour:'2-digit', minute:'2-digit'});
+};
+const fmtRel = iso => {
+  const diff = Date.now() - new Date(iso);
+  if (diff < 60000)   return 'przed chwilą';
+  if (diff < 3600000) return `${Math.floor(diff/60000)} min temu`;
+  if (diff < 86400000) return `${Math.floor(diff/3600000)} godz. temu`;
+  return fmt(iso);
+};
+
+let db = null, fbApp = null;
+function tryInitFirebase(cfg) {
   try {
-    if (!fbApp) fbApp = firebase.initializeApp(config);
+    if (!fbApp) fbApp = firebase.initializeApp(cfg);
     db = firebase.database();
-    db.ref('.info/connected'); // test connection
     return true;
   } catch(e) { console.error(e); return false; }
 }
@@ -139,7 +140,7 @@ function tryInitFirebase(config) {
 // ═══════════════════════════════════════════════
 //  AVATAR
 // ═══════════════════════════════════════════════
-function Av({ name, size=36 }) {
+function Av({ name, size = 36 }) {
   const b = getBro(name);
   return (
     <div className="av" style={{
@@ -153,17 +154,16 @@ function Av({ name, size=36 }) {
 //  APP
 // ═══════════════════════════════════════════════
 function App() {
-  const [screen,      setScreen]      = useState('loading');
-  const [page,        setPage]        = useState('dashboard');
-  const [user,        setUser]        = useState(null);
-  const [comps,       setComps]       = useState([]);
-  const [notifOk,     setNotifOk]     = useState(false);
-  const [toast,       setToast]       = useState(null);
-  const [cfgInput,    setCfgInput]    = useState('');
-  const [cfgError,    setCfgError]    = useState('');
-  const [connecting,  setConnecting]  = useState(false);
-  const [online,      setOnline]      = useState(true);
-  const [reminders,   setReminders]   = useState(() => {
+  const [screen,    setScreen]    = useState('loading');
+  const [page,      setPage]      = useState('dashboard');
+  const [user,      setUser]      = useState(null);
+  const [comps,     setComps]     = useState([]);
+  const [swaps,     setSwaps]     = useState({});
+  const [notifOk,   setNotifOk]   = useState(false);
+  const [toast,     setToast]     = useState(null);
+  const [swapModal, setSwapModal] = useState(null); // null | taskId
+  const [online,    setOnline]    = useState(true);
+  const [reminders, setReminders] = useState(() => {
     try { return JSON.parse(localStorage.getItem(REM_KEY) || '{}'); } catch { return {}; }
   });
 
@@ -171,7 +171,7 @@ function App() {
   const wKey    = `${new Date().getFullYear()}-W${wk}`;
   const ub      = user ? getBro(user) : null;
   const userRef = useRef(user);
-  const remTimers = useRef({});
+  const remTimers  = useRef({});
   const connectedAt = useRef(new Date().toISOString());
   const listenerUp  = useRef(false);
 
@@ -179,12 +179,12 @@ function App() {
 
   // ── Boot ─────────────────────────────────────
   useEffect(() => {
-    const cfg = HARDCODED_CONFIG;
-    if (tryInitFirebase(cfg)) {
+    if (tryInitFirebase(HARDCODED_CONFIG)) {
+      localStorage.setItem(FB_KEY, JSON.stringify(HARDCODED_CONFIG));
       bootListeners();
       setScreen('login');
     } else {
-      setScreen('setup');
+      setScreen('error');
     }
     setNotifOk(Notification.permission === 'granted');
   }, []);
@@ -197,13 +197,16 @@ function App() {
 
     db.ref('.info/connected').on('value', s => setOnline(!!s.val()));
 
-    // All completions (for dashboard + scores)
     db.ref('domio/completions').on('value', snap => {
       const raw = snap.val() || {};
       setComps(Object.entries(raw).map(([k,v]) => ({...v, _key:k})));
     });
 
-    // New completions by others → push notification
+    db.ref(`domio/swaps/${wKey}`).on('value', snap => {
+      setSwaps(snap.val() || {});
+    });
+
+    // Powiadomienie gdy brat coś zrobi
     db.ref('domio/completions').on('child_added', snap => {
       const c = snap.val();
       if (!c || c.when <= connectedAt.current) return;
@@ -213,74 +216,62 @@ function App() {
         new Notification('Dom.io 🏠', {
           body: `${c.who} właśnie zrobił(a): ${task?.name || c.id}`,
           tag: snap.key,
-          icon: '📋',
+        });
+      }
+    });
+
+    // Powiadomienie o propozycji zamiany
+    db.ref(`domio/swaps/${wKey}`).on('child_added', snap => {
+      const sw = snap.val();
+      if (!sw || sw.when <= connectedAt.current) return;
+      const who = userRef.current;
+      if (sw.to === who && sw.status === 'pending' && Notification.permission === 'granted') {
+        const task = TASKS.find(t => t.id === snap.key);
+        new Notification('Dom.io 🔄 Propozycja zamiany', {
+          body: `${sw.from} proponuje zamianę: ${task?.name}`,
+          tag: 'swap-' + snap.key,
         });
       }
     });
   }, []);
 
-  // ── Reminder scheduling ───────────────────────
+  // ── Przypomnienia ─────────────────────────────
   useEffect(() => {
     if (!user) return;
     const r = reminders[user];
     if (!r?.enabled || !r?.time) return;
     if (remTimers.current[user]) clearTimeout(remTimers.current[user]);
-    scheduleReminderFor(user, r.time);
+    scheduleReminder(user, r.time);
   }, [user, reminders]);
 
-  const scheduleReminderFor = (name, time) => {
+  const scheduleReminder = (name, time) => {
     const [h, m] = time.split(':').map(Number);
     const now = new Date(), target = new Date(now);
     target.setHours(h, m, 0, 0);
     if (target <= now) target.setDate(target.getDate() + 1);
-
     remTimers.current[name] = setTimeout(() => {
-      const myTasks = TASKS.filter(t => getAssigned(t, wk).includes(name));
-      const undone  = myTasks.filter(t =>
-        !comps.some(c => c.id === t.id && c.wk === wKey && c.who === name)
-      );
+      const myT  = TASKS.filter(t => getAssigned(t, wk, swaps).includes(name));
+      const undone = myT.filter(t => !comps.some(c => c.id===t.id && c.wk===wKey && c.who===name));
       if (Notification.permission === 'granted') {
         new Notification('Dom.io ⏰ Przypomnienie', {
           body: undone.length > 0
-            ? `Masz ${undone.length} niezrobion${undone.length===1?'e zadanie':'ych zadań'}!\n${undone.map(t=>t.name).join(' · ')}`
-            : '🎉 Wszystkie zadania zrobione! Świetna robota!',
-          tag: 'daily-reminder',
+            ? `Zostało Ci ${undone.length} zadanie(ń):\n${undone.map(t=>t.name).join(' · ')}`
+            : '🎉 Wszystkie Twoje zadania zrobione!',
+          tag: 'reminder',
         });
       }
-      const still = reminders[name];
-      if (still?.enabled) scheduleReminderFor(name, still.time);
+      if (reminders[name]?.enabled) scheduleReminder(name, time);
     }, target - now);
   };
 
-  // ── Toast auto-dismiss ────────────────────────
+  // ── Toast ─────────────────────────────────────
   useEffect(() => {
     if (!toast) return;
     const t = setTimeout(() => setToast(null), 2400);
     return () => clearTimeout(t);
   }, [toast]);
 
-  // ── Handlers ─────────────────────────────────
-  const handleSetup = () => {
-    setCfgError('');
-    setConnecting(true);
-    try {
-      const cfg = JSON.parse(cfgInput.trim());
-      if (!cfg.apiKey)       { setCfgError('Brakuje pola apiKey.'); setConnecting(false); return; }
-      if (!cfg.databaseURL)  { setCfgError('Brakuje pola databaseURL. Sprawdź czy Realtime Database jest włączone.'); setConnecting(false); return; }
-      if (tryInitFirebase(cfg)) {
-        localStorage.setItem(FB_KEY, JSON.stringify(cfg));
-        bootListeners();
-        setTimeout(() => { setScreen('login'); setConnecting(false); }, 600);
-      } else {
-        setCfgError('Nie udało się połączyć z Firebase. Sprawdź konfigurację i reguły bazy danych.');
-        setConnecting(false);
-      }
-    } catch {
-      setCfgError('Nieprawidłowy JSON. Upewnij się, że skopiowałeś cały obiekt firebaseConfig z Firebase Console.');
-      setConnecting(false);
-    }
-  };
-
+  // ── Akcje ─────────────────────────────────────
   const markDone = id => {
     if (!user || isDone(id) || !db) return;
     const task = TASKS.find(t => t.id === id);
@@ -288,8 +279,34 @@ function App() {
     setToast(`✓ ${task?.name}`);
   };
 
+  const proposeSwap = (taskId, targetBro) => {
+    if (!db) return;
+    db.ref(`domio/swaps/${wKey}/${taskId}`).set({
+      from: user, to: targetBro, status: 'pending', when: new Date().toISOString()
+    });
+    setSwapModal(null);
+    setToast(`🔄 Propozycja wysłana do ${targetBro}!`);
+  };
+
+  const respondSwap = (taskId, accept) => {
+    if (!db) return;
+    if (accept) {
+      db.ref(`domio/swaps/${wKey}/${taskId}/status`).set('accepted');
+      setToast('✅ Zamiana zaakceptowana!');
+    } else {
+      db.ref(`domio/swaps/${wKey}/${taskId}`).remove();
+      setToast('❌ Propozycja odrzucona.');
+    }
+  };
+
+  const cancelSwap = taskId => {
+    if (!db) return;
+    db.ref(`domio/swaps/${wKey}/${taskId}`).remove();
+    setToast('Propozycja cofnięta.');
+  };
+
   const enableNotif = async () => {
-    if (!('Notification' in window)) { setToast('Ta przeglądarka nie obsługuje powiadomień'); return; }
+    if (!('Notification' in window)) { setToast('Przeglądarka nie obsługuje powiadomień'); return; }
     const p = await Notification.requestPermission();
     if (p === 'granted') { setNotifOk(true); setToast('🔔 Powiadomienia włączone!'); }
     else setToast('Odmówiono dostępu do powiadomień.');
@@ -308,72 +325,30 @@ function App() {
     const s = new Date(); s.setDate(1); s.setHours(0,0,0,0);
     return comps.filter(c => c.who===name && new Date(c.when)>=s).length;
   };
-  const myTasks = user ? TASKS.filter(t => getAssigned(t,wk).includes(user)) : [];
 
-  // Shared card style
+  const myTasks       = user ? TASKS.filter(t => getAssigned(t,wk,swaps).includes(user)) : [];
+  const myDone        = myTasks.filter(t => isDone(t.id)).length;
+  const pendingForMe  = Object.entries(swaps).filter(([,s]) => s.to===user && s.status==='pending');
+  const myOutgoing    = Object.entries(swaps).filter(([,s]) => s.from===user && s.status==='pending');
+
+  // Shared style
   const C = { background:'#fff', border:'1px solid #ebebeb', borderRadius:14, padding:'14px 15px', marginBottom:8 };
 
   // ════════════════════════════════════════════════
   //  LOADING
   // ════════════════════════════════════════════════
   if (screen === 'loading') return (
-    <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',flexDirection:'column',gap:16}}>
+    <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',flexDirection:'column',gap:14}}>
       <div className="spinner"/>
       <div style={{fontSize:13,color:'#aaa'}}>Ładowanie Dom.io…</div>
     </div>
   );
 
-  // ════════════════════════════════════════════════
-  //  SETUP
-  // ════════════════════════════════════════════════
-  if (screen === 'setup') return (
-    <div className="setup-wrap">
-      <div style={{textAlign:'center',marginBottom:26}}>
-        <div style={{fontSize:32,marginBottom:6}}>🏠</div>
-        <div style={{fontSize:24,fontWeight:800}}>Dom.io</div>
-        <div style={{fontSize:13,color:'#888',marginTop:4}}>Konfiguracja bazy danych (jednorazowo)</div>
-      </div>
-
-      <div style={{background:'#EFF6FF',border:'1px solid #BFDBFE',borderRadius:14,padding:16,marginBottom:20,fontSize:13,lineHeight:1.8}}>
-        <div style={{fontWeight:800,color:'#1E40AF',marginBottom:10,fontSize:14}}>📋 Jak skonfigurować Firebase (5 min):</div>
-        <div style={{color:'#1E40AF'}}>
-          <b>1.</b> Wejdź na <b>console.firebase.google.com</b><br/>
-          <b>2.</b> "Dodaj projekt" → podaj nazwę np. <em>dom-braci</em><br/>
-          <b>3.</b> Lewe menu → <b>Build → Realtime Database</b> → "Utwórz bazę danych" → Europa<br/>
-          <b>4.</b> Zakładka <b>"Reguły"</b> → wklej poniższe i kliknij "Opublikuj":
-          <div style={{background:'#1E3A8A',color:'#93C5FD',borderRadius:8,padding:'8px 12px',fontFamily:'monospace',fontSize:11,margin:'6px 0',wordBreak:'break-all'}}>
-            {'{ "rules": { ".read": true, ".write": true } }'}
-          </div>
-          <b>5.</b> Ikona koła zębatego → <b>Ustawienia projektu</b> → sekcja "Twoje aplikacje" → kliknij <b>&lt;/&gt;</b> → skopiuj cały obiekt <code style={{background:'#DBEAFE',padding:'1px 4px',borderRadius:4}}>firebaseConfig</code><br/>
-          <b>6.</b> Wklej go poniżej i kliknij "Połącz"
-        </div>
-      </div>
-
-      <label style={{display:'block',fontWeight:700,fontSize:13,marginBottom:6}}>
-        Konfiguracja Firebase (wklej obiekt JSON):
-      </label>
-      <textarea
-        value={cfgInput}
-        onChange={e => setCfgInput(e.target.value)}
-        spellCheck={false}
-        placeholder={'{\n  "apiKey": "AIzaSy...",\n  "authDomain": "...",\n  "databaseURL": "https://...-rtdb.firebaseio.com",\n  "projectId": "...",\n  "storageBucket": "...",\n  "messagingSenderId": "...",\n  "appId": "..."\n}'}
-        style={{width:'100%',height:170,fontFamily:'monospace',fontSize:12,
-          border:'1px solid #ddd',borderRadius:12,padding:13,resize:'none',color:'#333',background:'#fafafa'}}
-      />
-      {cfgError && <div style={{color:'#DC2626',fontSize:12,marginTop:6,fontWeight:600}}>⚠️ {cfgError}</div>}
-
-      <button onClick={handleSetup} disabled={connecting} style={{
-        width:'100%',marginTop:14,padding:14,background:connecting?'#aaa':'#1D9E75',
-        color:'#fff',borderRadius:12,fontSize:15,fontWeight:800,
-        display:'flex',alignItems:'center',justifyContent:'center',gap:8,
-      }}>
-        {connecting ? <><div className="spinner" style={{width:18,height:18,borderWidth:2}}/> Łączę…</> : 'Połącz z Firebase →'}
-      </button>
-
-      <div style={{textAlign:'center',marginTop:14,fontSize:11,color:'#bbb',lineHeight:1.6}}>
-        Konfigurację wklejają wszyscy bracia raz na swoim urządzeniu.<br/>
-        Dane nie są widoczne publicznie — dostęp ma tylko kto zna link do Twojej bazy.
-      </div>
+  if (screen === 'error') return (
+    <div style={{padding:'32px 18px',textAlign:'center'}}>
+      <div style={{fontSize:32,marginBottom:12}}>⚠️</div>
+      <div style={{fontWeight:800,fontSize:16}}>Błąd połączenia z Firebase</div>
+      <div style={{fontSize:13,color:'#888',marginTop:8}}>Sprawdź połączenie internetowe i odśwież stronę.</div>
     </div>
   );
 
@@ -385,12 +360,10 @@ function App() {
       <div style={{textAlign:'center',marginBottom:28}}>
         <div style={{fontSize:30,fontWeight:800,letterSpacing:'-1px'}}>Dom.io 🏠</div>
         <div style={{fontSize:13,color:'#888',marginTop:5}}>Kto to?</div>
-        {!online && <div style={{marginTop:8,fontSize:12,color:'#F59E0B',fontWeight:600}}>⚠️ Brak połączenia z internetem</div>}
+        {!online && <div style={{marginTop:8,fontSize:12,color:'#F59E0B',fontWeight:700}}>⚠️ Brak połączenia z internetem</div>}
       </div>
-
       {BROS.map(b => {
-        const bTasks = TASKS.filter(t => getAssigned(t,wk).includes(b.name));
-        const bDone  = bTasks.filter(t => isDone(t.id, b.name)).length;
+        const bt = TASKS.filter(t => getAssigned(t,wk,{}).includes(b.name));
         return (
           <div key={b.name} onClick={() => setUser(b.name)} style={{
             ...C, cursor:'pointer', display:'flex', alignItems:'center', gap:14,
@@ -400,7 +373,7 @@ function App() {
             <div style={{flex:1}}>
               <div style={{fontWeight:800,fontSize:18}}>{b.name}</div>
               <div style={{fontSize:12,color:'#888',marginTop:2}}>
-                {bTasks.length} zadań · {bDone} zrobionych
+                {bt.length} zadań w tym tygodniu
               </div>
             </div>
             <div style={{textAlign:'right'}}>
@@ -410,10 +383,9 @@ function App() {
           </div>
         );
       })}
-
       <div style={{textAlign:'center',marginTop:16,fontSize:11,color:'#ccc'}}>
         Tydzień {wk} · {new Date().toLocaleDateString('pl-PL',{month:'long',year:'numeric'})}
-        {online && <span style={{color:'#1D9E75'}}> · 🔥 online</span>}
+        {online && <span style={{color:'#1D9E75'}}> · 🔥 live</span>}
       </div>
     </div>
   );
@@ -421,13 +393,44 @@ function App() {
   // ════════════════════════════════════════════════
   //  MAIN APP
   // ════════════════════════════════════════════════
-  const myDone = myTasks.filter(t => isDone(t.id)).length;
-  const uRem   = reminders[user] || { enabled:false, time:'20:00' };
+  const uRem = reminders[user] || { enabled:false, time:'20:00' };
 
   return (
     <>
       {/* Toast */}
       {toast && <div className="toast">{toast}</div>}
+
+      {/* Swap modal */}
+      {swapModal && (() => {
+        const task    = TASKS.find(t => t.id === swapModal);
+        const others  = BROS.filter(b => b.name !== user);
+        return (
+          <div className="modal-bg" onClick={() => setSwapModal(null)}>
+            <div className="modal-box" onClick={e => e.stopPropagation()}>
+              <div style={{fontWeight:800,fontSize:17,marginBottom:6}}>🔄 Zaproponuj zamianę</div>
+              <div style={{fontSize:13,color:'#888',marginBottom:18}}>
+                Chcesz oddać: <b>{task?.icon} {task?.name}</b>
+              </div>
+              {others.map(b => (
+                <button key={b.name} onClick={() => proposeSwap(swapModal, b.name)} style={{
+                  width:'100%',marginBottom:10,padding:'14px',
+                  background:b.light, color:b.dark,
+                  border:`2px solid ${b.accent}`,borderRadius:12,
+                  fontSize:15,fontWeight:800,
+                  display:'flex',alignItems:'center',gap:12,
+                }}>
+                  <Av name={b.name} size={36}/>
+                  <span>Zamień z {b.name}</span>
+                </button>
+              ))}
+              <button onClick={() => setSwapModal(null)} style={{
+                width:'100%',padding:'12px',border:'1px solid #ebebeb',
+                borderRadius:12,background:'transparent',fontSize:14,color:'#888',
+              }}>Anuluj</button>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Header */}
       <div className="header">
@@ -436,26 +439,26 @@ function App() {
           <div>
             <div style={{fontWeight:800,fontSize:14,display:'flex',alignItems:'center',gap:6}}>
               {user}
-              {online
-                ? <span style={{fontSize:9,color:'#1D9E75',fontWeight:600,background:'#E1F5EE',padding:'1px 6px',borderRadius:99}}>🔥 LIVE</span>
-                : <span style={{fontSize:9,color:'#F59E0B',fontWeight:600,background:'#FFFBEB',padding:'1px 6px',borderRadius:99}}>⚠️ offline</span>}
+              <span style={{fontSize:9,fontWeight:600,padding:'1px 6px',borderRadius:99,
+                background:online?'#E1F5EE':'#FFFBEB',
+                color:online?'#1D9E75':'#F59E0B'}}>
+                {online?'🔥 LIVE':'⚠️ offline'}
+              </span>
             </div>
             <div style={{fontSize:10,color:'#aaa'}}>
-              {page==='mine'
-                ? `${myDone}/${myTasks.length} zrobionych w tygodniu ${wk}`
-                : `Tydzień ${wk}`}
+              {page==='mine' ? `${myDone}/${myTasks.length} zrobionych` : `Tydzień ${wk}`}
             </div>
           </div>
         </div>
         <div style={{display:'flex',gap:5}}>
-          <button onClick={notifOk ? undefined : enableNotif}
-            title={notifOk ? 'Powiadomienia aktywne' : 'Włącz powiadomienia'}
+          <button onClick={notifOk?undefined:enableNotif}
+            title={notifOk?'Powiadomienia aktywne':'Włącz powiadomienia'}
             style={{padding:'6px 9px',border:`1px solid ${notifOk?ub.accent:'#ddd'}`,
               borderRadius:10,background:notifOk?ub.light:'transparent',fontSize:16,
               color:notifOk?ub.dark:'#bbb'}}>
-            {notifOk ? '🔔' : '🔕'}
+            {notifOk?'🔔':'🔕'}
           </button>
-          <button onClick={() => { setUser(null); setPage('dashboard'); }}
+          <button onClick={() => {setUser(null);setPage('dashboard');}}
             style={{padding:'6px 11px',border:'1px solid #ddd',borderRadius:10,
               background:'transparent',fontSize:12,fontWeight:700,color:'#888'}}>
             Zmień
@@ -463,61 +466,67 @@ function App() {
         </div>
       </div>
 
-      {/* ──── DASHBOARD ──── */}
+      {/* ──────── DASHBOARD ──────── */}
       {page === 'dashboard' && (
         <div className="scroll">
-          {/* Brother progress cards */}
+          {/* Progress kart */}
           <div style={{display:'grid',gridTemplateColumns:'repeat(3, 1fr)',gap:7,marginBottom:12}}>
             {BROS.map(b => {
-              const bt = TASKS.filter(t => getAssigned(t,wk).includes(b.name));
+              const bt = TASKS.filter(t => getAssigned(t,wk,swaps).includes(b.name));
               const bd = bt.filter(t => isDone(t.id, b.name)).length;
-              const pct = bt.length ? Math.round((bd/bt.length)*100) : 0;
               return (
                 <div key={b.name} style={{background:'#fff',border:'1px solid #ebebeb',
                   borderTop:`4px solid ${b.accent}`,borderRadius:14,padding:'10px 8px',textAlign:'center'}}>
-                  <div style={{display:'flex',justifyContent:'center',marginBottom:4}}>
-                    <Av name={b.name} size={26}/>
-                  </div>
+                  <div style={{display:'flex',justifyContent:'center',marginBottom:4}}><Av name={b.name} size={26}/></div>
                   <div style={{fontWeight:700,fontSize:12}}>{b.name}</div>
-                  <div style={{fontSize:11,fontWeight:700,
-                    color:bd===bt.length&&bt.length>0?'#0A5E41':'#aaa',marginTop:1}}>
+                  <div style={{fontSize:11,fontWeight:700,marginTop:1,
+                    color:bd===bt.length&&bt.length>0?'#0A5E41':'#bbb'}}>
                     {bd}/{bt.length}
                   </div>
                   <div className="bar-track" style={{marginTop:4}}>
-                    <div className="bar-fill" style={{width:`${pct}%`,background:b.accent}}/>
+                    <div className="bar-fill" style={{
+                      width:`${bt.length?Math.round((bd/bt.length)*100):0}%`,
+                      background:b.accent}}/>
                   </div>
                 </div>
               );
             })}
           </div>
 
-          {/* Tasks */}
+          {/* Task list */}
           {TASKS.map(task => {
-            const resp    = getAssigned(task, wk);
+            const resp    = getAssigned(task, wk, swaps);
             const isAll   = task.assign === 'all';
             const doneWho = BROS.filter(b => isDone(task.id, b.name));
-            const allDone = isAll ? doneWho.length === BROS.length : doneWho.length > 0;
+            const allDone = isAll ? doneWho.length===BROS.length : doneWho.length>0;
             const sComp   = !isAll && doneWho[0] ? getC(task.id, doneWho[0].name) : null;
-            const lColor  = allDone ? '#1D9E75' : (resp.length===1 ? getBro(resp[0]).accent : '#e0e0e0');
+            const sw      = swaps[task.id];
+            const lColor  = allDone?'#1D9E75':(resp.length===1?getBro(resp[0]).accent:'#e0e0e0');
             return (
               <div key={task.id} style={{...C,display:'flex',alignItems:'center',gap:10,
                 borderLeft:`4px solid ${lColor}`,opacity:allDone?0.45:1}}>
                 <div style={{width:38,height:38,borderRadius:11,flexShrink:0,
-                  background:allDone?'#E1F5EE':'#f5f5f5',display:'flex',
-                  alignItems:'center',justifyContent:'center',fontSize:allDone?16:19}}>
-                  {allDone ? '✓' : task.icon}
+                  background:allDone?'#E1F5EE':'#f5f5f5',
+                  display:'flex',alignItems:'center',justifyContent:'center',
+                  fontSize:allDone?16:20}}>
+                  {allDone?'✓':task.icon}
                 </div>
                 <div style={{flex:1,minWidth:0}}>
                   <div style={{fontWeight:700,fontSize:13,marginBottom:3,
                     color:allDone?'#bbb':'#1a1a1a',
                     textDecoration:allDone?'line-through':'none'}}>
                     {task.name}
+                    {sw?.status==='pending' && (
+                      <span style={{fontSize:10,marginLeft:6,color:'#F59E0B',fontWeight:700}}>⏳ zamiana…</span>
+                    )}
+                    {sw?.status==='accepted' && (
+                      <span style={{fontSize:10,marginLeft:6,color:'#1D9E75',fontWeight:700}}>🔄 zamieniono</span>
+                    )}
                   </div>
                   {isAll ? (
                     <div style={{display:'flex',gap:3,flexWrap:'wrap'}}>
                       {BROS.map(b => {
                         const bd = isDone(task.id, b.name);
-                        const bc = bd ? getC(task.id, b.name) : null;
                         return (
                           <span key={b.name} className="badge" style={{
                             background:bd?b.light:'#f5f5f5',
@@ -537,9 +546,7 @@ function App() {
                         </div>
                       ))}
                       {sComp && (
-                        <span style={{fontSize:10,color:'#0A5E41',marginLeft:2}}>
-                          · {fmtRelative(sComp.when)}
-                        </span>
+                        <span style={{fontSize:10,color:'#0A5E41'}}>· {fmtRel(sComp.when)}</span>
                       )}
                     </div>
                   )}
@@ -550,43 +557,124 @@ function App() {
         </div>
       )}
 
-      {/* ──── MOJE ZADANIA ──── */}
+      {/* ──────── MOJE ZADANIA ──────── */}
       {page === 'mine' && (
         <div className="scroll">
-          {myTasks.length === 0 ? (
-            <div style={{...C,textAlign:'center',padding:'44px 16px'}}>
+
+          {/* Przychodzące propozycje zamiany */}
+          {pendingForMe.length > 0 && (
+            <div style={{background:'#FFFBEB',border:'1px solid #FDE68A',borderRadius:14,
+              padding:'12px 14px',marginBottom:12}}>
+              <div style={{fontWeight:800,fontSize:13,color:'#92400E',marginBottom:8}}>
+                🔄 Propozycje zamiany ({pendingForMe.length})
+              </div>
+              {pendingForMe.map(([taskId, sw]) => {
+                const task = TASKS.find(t => t.id === taskId);
+                return (
+                  <div key={taskId} style={{display:'flex',alignItems:'center',gap:10,
+                    padding:'8px 0',borderTop:'1px solid #FDE68A'}}>
+                    <div style={{flex:1}}>
+                      <div style={{fontWeight:700,fontSize:13}}>
+                        <Av name={sw.from} size={18} style={{display:'inline-flex',verticalAlign:'middle',marginRight:4}}/>
+                        {' '}{sw.from} → {task?.icon} {task?.name}
+                      </div>
+                      <div style={{fontSize:11,color:'#A16207',marginTop:1}}>
+                        Przejmiesz to zadanie od {sw.from}
+                      </div>
+                    </div>
+                    <button onClick={() => respondSwap(taskId, true)} style={{
+                      padding:'7px 11px',background:'#1D9E75',color:'#fff',
+                      borderRadius:9,fontSize:12,fontWeight:800}}>
+                      ✓ OK
+                    </button>
+                    <button onClick={() => respondSwap(taskId, false)} style={{
+                      padding:'7px 11px',background:'#FEE2E2',color:'#DC2626',
+                      border:'1px solid #FCA5A5',borderRadius:9,fontSize:12,fontWeight:800}}>
+                      ✗ Nie
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Wychodzące propozycje */}
+          {myOutgoing.length > 0 && (
+            <div style={{background:'#F0F9FF',border:'1px solid #BAE6FD',borderRadius:14,
+              padding:'12px 14px',marginBottom:12}}>
+              <div style={{fontWeight:800,fontSize:13,color:'#0369A1',marginBottom:8}}>
+                ⏳ Oczekujące zamiany
+              </div>
+              {myOutgoing.map(([taskId, sw]) => {
+                const task = TASKS.find(t => t.id === taskId);
+                return (
+                  <div key={taskId} style={{display:'flex',alignItems:'center',gap:10,
+                    padding:'8px 0',borderTop:'1px solid #BAE6FD'}}>
+                    <div style={{flex:1,fontSize:13}}>
+                      {task?.icon} {task?.name} → <b>{sw.to}</b>
+                      <div style={{fontSize:11,color:'#0284C7',marginTop:1}}>Czekam na odpowiedź…</div>
+                    </div>
+                    <button onClick={() => cancelSwap(taskId)} style={{
+                      padding:'6px 10px',background:'transparent',color:'#0369A1',
+                      border:'1px solid #BAE6FD',borderRadius:9,fontSize:11,fontWeight:700}}>
+                      Cofnij
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Moje zadania */}
+          {myTasks.length === 0 && pendingForMe.length === 0 ? (
+            <div style={{...C,textAlign:'center',padding:'40px 16px'}}>
               <div style={{fontSize:40,marginBottom:14}}>🎉</div>
-              <div style={{fontWeight:800,fontSize:17}}>Ten tydzień masz wolny!</div>
+              <div style={{fontWeight:800,fontSize:16}}>Ten tydzień masz wolny!</div>
               <div style={{fontSize:13,color:'#aaa',marginTop:6}}>Zasłużyłeś na odpoczynek.</div>
             </div>
           ) : myTasks.map(task => {
-            const d = isDone(task.id);
-            const c = d ? getC(task.id) : null;
+            const d  = isDone(task.id);
+            const c  = d ? getC(task.id) : null;
+            const sw = swaps[task.id];
+            const hasOutgoing = sw?.from===user && sw?.status==='pending';
             return (
-              <div key={task.id} style={{...C,display:'flex',alignItems:'center',gap:13,
+              <div key={task.id} style={{...C,display:'flex',alignItems:'center',gap:12,
                 borderLeft:`4px solid ${d?'#1D9E75':ub.accent}`,opacity:d?0.5:1}}>
                 <div style={{width:44,height:44,borderRadius:12,flexShrink:0,
-                  background:d?'#E1F5EE':ub.light,display:'flex',alignItems:'center',
-                  justifyContent:'center',fontSize:d?18:22,color:d?'#0A5E41':ub.dark}}>
-                  {d ? '✓' : task.icon}
+                  background:d?'#E1F5EE':ub.light,
+                  display:'flex',alignItems:'center',justifyContent:'center',
+                  fontSize:d?18:22,color:d?'#0A5E41':ub.dark}}>
+                  {d?'✓':task.icon}
                 </div>
                 <div style={{flex:1,minWidth:0}}>
-                  <div style={{fontWeight:700,fontSize:15,marginBottom:3,
+                  <div style={{fontWeight:700,fontSize:15,marginBottom:2,
                     color:d?'#aaa':'#1a1a1a',textDecoration:d?'line-through':'none'}}>
                     {task.name}
                   </div>
                   <div style={{fontSize:11,color:'#aaa'}}>
-                    {c ? `Zrobione ${fmtRelative(c.when)}` : task.note}
+                    {c ? `Zrobione ${fmtRel(c.when)}` : task.note}
                   </div>
                 </div>
                 {!d && (
-                  <button onClick={() => markDone(task.id)} style={{
-                    background:ub.accent,color:'#fff',border:'none',
-                    borderRadius:11,padding:'9px 13px',fontSize:13,fontWeight:800,
-                    display:'flex',alignItems:'center',gap:4,flexShrink:0,
-                  }}>
-                    ✓ Gotowe
-                  </button>
+                  <div style={{display:'flex',flexDirection:'column',gap:5,flexShrink:0}}>
+                    <button onClick={() => markDone(task.id)} style={{
+                      background:ub.accent,color:'#fff',border:'none',
+                      borderRadius:10,padding:'8px 12px',fontSize:13,fontWeight:800,
+                      display:'flex',alignItems:'center',gap:3}}>
+                      ✓ Gotowe
+                    </button>
+                    {!hasOutgoing && task.assign !== 'all' && !Array.isArray(task.assign) && (
+                      <button onClick={() => setSwapModal(task.id)} style={{
+                        background:'transparent',color:ub.dark,
+                        border:`1px solid ${ub.accent}`,
+                        borderRadius:10,padding:'5px 12px',fontSize:11,fontWeight:700}}>
+                        🔄 Zamień
+                      </button>
+                    )}
+                    {hasOutgoing && (
+                      <span style={{fontSize:10,color:'#F59E0B',fontWeight:700,textAlign:'center'}}>⏳ czeka…</span>
+                    )}
+                  </div>
                 )}
               </div>
             );
@@ -594,22 +682,21 @@ function App() {
         </div>
       )}
 
-      {/* ──── WYNIKI ──── */}
+      {/* ──────── WYNIKI ──────── */}
       {page === 'scores' && (() => {
         const sorted = [...BROS].sort((a,b) => mScore(b.name)-mScore(a.name));
-        const maxS   = Math.max(...BROS.map(b => mScore(b.name)), 1);
-        const recent = [...comps].sort((a,b) => new Date(b.when)-new Date(a.when)).slice(0,25);
+        const maxS   = Math.max(...BROS.map(b=>mScore(b.name)), 1);
+        const recent = [...comps].sort((a,b)=>new Date(b.when)-new Date(a.when)).slice(0,25);
         const medals = ['🥇','🥈','🥉'];
         return (
           <div className="scroll">
             <div style={{fontSize:12,color:'#bbb',marginBottom:10,textTransform:'capitalize'}}>
               Wyniki · {new Date().toLocaleDateString('pl-PL',{month:'long',year:'numeric'})}
             </div>
-
             <div style={{...C,marginBottom:14}}>
               {sorted.map((b,i) => (
                 <div key={b.name} style={{display:'flex',alignItems:'center',gap:10,padding:'11px 0',
-                  borderBottom:i<2?'1px solid #f0f0f0':'none'}}>
+                  borderBottom:i<2?'1px solid #f5f5f5':'none'}}>
                   <span style={{fontSize:20,width:26,textAlign:'center'}}>{medals[i]}</span>
                   <Av name={b.name} size={34}/>
                   <div style={{flex:1}}>
@@ -624,19 +711,18 @@ function App() {
                 </div>
               ))}
             </div>
-
             <div style={{fontSize:12,color:'#bbb',marginBottom:8}}>Ostatnia aktywność</div>
-            {recent.length === 0
-              ? <div style={{...C,textAlign:'center',color:'#ccc',fontSize:13,padding:'24px'}}>Brak aktywności — czas wziąć się do pracy 🧹</div>
+            {recent.length===0
+              ? <div style={{...C,textAlign:'center',color:'#ccc',fontSize:13,padding:'24px'}}>Brak aktywności 🧹</div>
               : recent.map((c,i) => {
-                  const task = TASKS.find(t => t.id === c.id);
+                  const task = TASKS.find(t=>t.id===c.id);
                   return (
                     <div key={i} className="card-sm" style={{display:'flex',alignItems:'center',gap:10}}>
                       <Av name={c.who} size={28}/>
                       <div style={{flex:1}}>
                         <span style={{fontWeight:700,fontSize:13}}>{c.who}</span>
                         <span style={{fontSize:13,color:'#555'}}> — {task?.name||c.id}</span>
-                        <div style={{fontSize:11,color:'#bbb',marginTop:1}}>{fmtRelative(c.when)}</div>
+                        <div style={{fontSize:11,color:'#bbb',marginTop:1}}>{fmtRel(c.when)}</div>
                       </div>
                       <span style={{fontSize:18}}>{task?.icon||'📋'}</span>
                     </div>
@@ -647,114 +733,98 @@ function App() {
         );
       })()}
 
-      {/* ──── USTAWIENIA ──── */}
+      {/* ──────── USTAWIENIA ──────── */}
       {page === 'settings' && (
         <div className="scroll">
-
-          {/* Notifications */}
           <div style={{...C,marginBottom:10}}>
             <div style={{fontWeight:800,fontSize:15,marginBottom:14}}>🔔 Powiadomienia push</div>
-
             <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:notifOk?0:12}}>
               <div>
                 <div style={{fontWeight:700,fontSize:14}}>Gdy brat zrobi zadanie</div>
                 <div style={{fontSize:12,color:'#aaa',marginTop:2}}>
-                  {notifOk ? '✓ Aktywne — strona musi być otwarta' : 'Wyłączone'}
+                  {notifOk?'✓ Aktywne':'Wyłączone'}
                 </div>
               </div>
-              <button onClick={notifOk ? undefined : enableNotif} style={{
+              <button onClick={notifOk?undefined:enableNotif} style={{
                 padding:'8px 14px',border:`1px solid ${notifOk?ub.accent:'#ddd'}`,
                 borderRadius:10,background:notifOk?ub.light:'transparent',
                 fontSize:13,fontWeight:700,color:notifOk?ub.dark:'#555',
-                cursor:notifOk?'default':'pointer',
-              }}>
-                {notifOk ? '✓ Włączone' : 'Włącz'}
+                cursor:notifOk?'default':'pointer'}}>
+                {notifOk?'✓ Włączone':'Włącz'}
               </button>
             </div>
-
             {!notifOk && (
               <div style={{background:'#FFFBEB',border:'1px solid #FDE68A',borderRadius:10,
                 padding:'10px 12px',fontSize:12,color:'#92400E'}}>
-                💡 Włącz powiadomienia, żeby dowiadywać się na bieżąco co robią Bartek, Kuba i Mikołaj — i żeby działały przypomnienia.
+                💡 Włącz powiadomienia żeby dostawać alerty o zadaniach i propozycjach zamiany.
               </div>
             )}
           </div>
 
-          {/* Reminders */}
           <div style={{...C,marginBottom:10}}>
             <div style={{fontWeight:800,fontSize:15,marginBottom:14}}>⏰ Codzienne przypomnienie</div>
-
             <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}}>
               <div>
                 <div style={{fontWeight:700,fontSize:14}}>Przypomnienie o zadaniach</div>
                 <div style={{fontSize:12,color:'#aaa',marginTop:2}}>
-                  {uRem.enabled ? `Aktywne · ${uRem.time} każdego dnia` : 'Wyłączone'}
+                  {uRem.enabled?`Aktywne · ${uRem.time}`:'Wyłączone'}
                 </div>
               </div>
-              <div className="toggle"
-                style={{background:uRem.enabled?ub.accent:'#ddd'}}
-                onClick={() => {
-                  if (!notifOk && !uRem.enabled) { enableNotif(); }
-                  updateReminder(!uRem.enabled, uRem.time);
-                }}>
+              <div className="toggle" style={{background:uRem.enabled?ub.accent:'#ddd'}}
+                onClick={() => {if(!notifOk&&!uRem.enabled)enableNotif(); updateReminder(!uRem.enabled,uRem.time);}}>
                 <div className="toggle-knob" style={{left:uRem.enabled?23:3}}/>
               </div>
             </div>
-
             {uRem.enabled && (
               <>
-                <label style={{display:'block',fontSize:13,fontWeight:700,marginBottom:6}}>
-                  Godzina przypomnienia:
-                </label>
+                <label style={{display:'block',fontSize:13,fontWeight:700,marginBottom:6}}>Godzina:</label>
                 <input type="time" value={uRem.time}
-                  onChange={e => updateReminder(true, e.target.value)}
+                  onChange={e=>updateReminder(true,e.target.value)}
                   style={{width:'100%',padding:'10px 14px',border:'1px solid #ddd',
-                    borderRadius:10,fontSize:16,fontFamily:'Nunito, sans-serif',color:'#1a1a1a'}}
-                />
-                <div style={{fontSize:12,color:'#bbb',marginTop:10,lineHeight:1.6}}>
-                  ℹ️ Przypomnienie działa gdy strona jest otwarta w przeglądarce.<br/>
-                  Aby działało w tle: zainstaluj aplikację ("Dodaj do ekranu głównego") i włącz powiadomienia dla niej.
+                    borderRadius:10,fontSize:16,fontFamily:'Nunito,sans-serif',color:'#1a1a1a'}}/>
+                <div style={{fontSize:11,color:'#bbb',marginTop:8,lineHeight:1.6}}>
+                  ℹ️ Działa gdy strona jest otwarta. Zainstaluj jako aplikację ("Dodaj do ekranu głównego") dla lepszego działania w tle.
                 </div>
               </>
             )}
           </div>
 
-          {/* Firebase status */}
           <div style={{...C}}>
-            <div style={{fontWeight:800,fontSize:15,marginBottom:12}}>🔥 Firebase — dane w chmurze</div>
-            <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:12}}>
-              <span className="dot" style={{background:online?'#1D9E75':'#F59E0B'}}/>
-              <span style={{fontSize:13,fontWeight:600,color:online?'#1D9E75':'#F59E0B'}}>
-                {online ? 'Połączono — dane synchronizują się w czasie rzeczywistym' : 'Offline — brak połączenia'}
-              </span>
-            </div>
-            <div style={{fontSize:12,color:'#aaa',marginBottom:12}}>
-              Wszyscy bracia widzą te same dane. Zaznaczenie zadania natychmiast pojawia się na telefonie innych.
-            </div>
-            <button
-              onClick={() => { if (window.confirm('Na pewno? Trzeba będzie ponownie wkleić konfigurację Firebase.')) { localStorage.removeItem(FB_KEY); window.location.reload(); }}}
-              style={{width:'100%',padding:'10px',border:'1px solid #FCA5A5',
-                borderRadius:10,background:'#FFF5F5',fontSize:13,fontWeight:700,color:'#DC2626'}}>
-              Resetuj konfigurację Firebase
-            </button>
+            <div style={{fontWeight:800,fontSize:15,marginBottom:10}}>📊 Podział zadań (tydzień {wk})</div>
+            {BROS.map(b => {
+              const bt = TASKS.filter(t => getAssigned(t,wk,swaps).includes(b.name));
+              return (
+                <div key={b.name} style={{marginBottom:10}}>
+                  <div style={{display:'flex',alignItems:'center',gap:6,marginBottom:4}}>
+                    <Av name={b.name} size={20}/>
+                    <span style={{fontWeight:700,fontSize:13}}>{b.name}</span>
+                    <span style={{fontSize:11,color:'#aaa',marginLeft:'auto'}}>{bt.length} zadań</span>
+                  </div>
+                  <div style={{fontSize:11,color:'#888',paddingLeft:26}}>
+                    {bt.map(t=>t.icon+' '+t.name).join(' · ')||'Brak zadań'}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
 
-      {/* Bottom Nav */}
+      {/* Bottom nav */}
       <div className="bottom-nav">
         {[
           {id:'dashboard',label:'Przegląd',ico:'🏠'},
-          {id:'mine',     label:'Moje',    ico:'✅'},
+          {id:'mine',     label:'Moje',    ico:'✅',badge:pendingForMe.length},
           {id:'scores',   label:'Wyniki',  ico:'🏆'},
           {id:'settings', label:'Ustaw.',  ico:'⚙️'},
-        ].map(({id,label,ico}) => (
-          <button key={id} className="nav-btn" onClick={() => setPage(id)} style={{
+        ].map(({id,label,ico,badge}) => (
+          <button key={id} className="nav-btn" onClick={()=>setPage(id)} style={{
             color:page===id?ub.accent:'#ccc',
             borderTop:page===id?`3px solid ${ub.accent}`:'3px solid transparent',
           }}>
             <span style={{fontSize:21}}>{ico}</span>
             {label}
+            {badge>0 && <span className="notif-dot"/>}
           </button>
         ))}
       </div>
