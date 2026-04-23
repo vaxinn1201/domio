@@ -3,64 +3,87 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <meta name="theme-color" content="#ffffff">
+  <meta name="theme-color" content="#1D9E75">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Dom.io">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon.png">
-  <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
-  <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>Dom.io 🏠</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    html, body { height: 100%; overflow: hidden; }
-    body { font-family: 'Nunito', sans-serif; background: #f8f6f2; color: #1a1a1a; }
-    #root { max-width: 480px; margin: 0 auto; height: 100vh; display: flex; flex-direction: column; background: #fff; overflow: hidden; position: relative; }
-    .scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 12px 12px 80px; }
-    .card  { background: #fff; border: 1px solid #ebebeb; border-radius: 14px; padding: 14px 15px; margin-bottom: 8px; }
-    .card-sm { background: #fff; border: 1px solid #ebebeb; border-radius: 12px; padding: 10px 13px; margin-bottom: 7px; }
-    button { font-family: 'Nunito', sans-serif; cursor: pointer; transition: transform .1s; border: none; }
-    button:active { transform: scale(0.96); }
-    .header { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; border-bottom: 1px solid #ebebeb; background: #fff; flex-shrink: 0; }
-    .bottom-nav { display: flex; border-top: 1px solid #ebebeb; background: #fff; flex-shrink: 0; padding-bottom: env(safe-area-inset-bottom, 0); }
-    .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 0 10px; background: transparent; font-family: 'Nunito', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: .3px; position: relative; }
-    .av { border-radius: 50%; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .badge { display: inline-flex; align-items: center; gap: 2px; font-size: 10px; padding: 2px 7px; border-radius: 99px; }
-    .toggle { width: 46px; height: 26px; border-radius: 13px; position: relative; cursor: pointer; transition: background .2s; flex-shrink: 0; }
-    .toggle-knob { width: 20px; height: 20px; border-radius: 50%; background: #fff; position: absolute; top: 3px; transition: left .2s; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
-    .bar-track { height: 5px; background: #f0f0f0; border-radius: 3px; overflow: hidden; }
-    .bar-fill  { height: 100%; border-radius: 3px; transition: width .4s ease; }
-    .toast { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: #fff; border-radius: 24px; padding: 9px 20px; font-size: 13px; font-weight: 700; z-index: 999; white-space: nowrap; pointer-events: none; }
-    .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 200; display: flex; align-items: flex-end; justify-content: center; }
-    .modal-box { background: #fff; border-radius: 22px 22px 0 0; padding: 20px 18px 36px; width: 100%; max-width: 480px; }
-    .notif-dot { position: absolute; top: 6px; right: 18px; width: 8px; height: 8px; border-radius: 50%; background: #EF4444; border: 2px solid #fff; }
-    .spinner { width: 24px; height: 24px; border: 3px solid #f0f0f0; border-top: 3px solid #1D9E75; border-radius: 50%; animation: spin .7s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+    html,body{height:100%;overflow:hidden}
+    body{font-family:'Nunito',sans-serif;background:#f8f6f2;color:#1a1a1a}
+    #app{max-width:480px;margin:0 auto;height:100vh;display:flex;flex-direction:column;background:#fff;overflow:hidden}
+    .scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 12px 80px}
+    .card{background:#fff;border:1px solid #ebebeb;border-radius:14px;padding:14px 15px;margin-bottom:8px}
+    .card-sm{background:#fff;border:1px solid #ebebeb;border-radius:12px;padding:10px 13px;margin-bottom:7px}
+    button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;background:transparent;transition:transform .1s}
+    button:active{transform:scale(.96)}
+    .header{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid #ebebeb;flex-shrink:0}
+    .bottom-nav{display:flex;border-top:1px solid #ebebeb;background:#fff;flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0)}
+    .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0 10px;font-size:9px;font-weight:700;letter-spacing:.3px;position:relative}
+    .av{border-radius:50%;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .pill{font-size:10px;padding:2px 7px;border-radius:99px;display:inline-flex;align-items:center}
+    .bar-track{height:5px;background:#f0f0f0;border-radius:3px;overflow:hidden}
+    .bar-fill{height:100%;border-radius:3px;transition:width .4s}
+    .toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;border-radius:24px;padding:9px 20px;font-size:13px;font-weight:700;z-index:999;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s}
+    .toast.show{opacity:1}
+    .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+    .modal-bg.show{opacity:1;pointer-events:all}
+    .modal-box{background:#fff;border-radius:22px 22px 0 0;padding:20px 18px 40px;width:100%;max-width:480px;transform:translateY(100%);transition:transform .25s}
+    .modal-bg.show .modal-box{transform:translateY(0)}
+    .notif-dot{position:absolute;top:5px;right:12px;width:8px;height:8px;border-radius:50%;background:#EF4444;border:2px solid #fff}
+    .spinner{width:28px;height:28px;border:3px solid #f0f0f0;border-top-color:#1D9E75;border-radius:50%;animation:spin .7s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .toggle{width:46px;height:26px;border-radius:13px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+    .toggle-knob{width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+    .screen{display:none;flex-direction:column;height:100%}
+    .screen.active{display:flex}
+    #scr-loading{align-items:center;justify-content:center;gap:14px;height:100vh}
+    #scr-login{overflow-y:auto;padding:32px 16px 24px;display:block}
+    #scr-login.active{display:block}
+    #scr-main{display:none;flex-direction:column;height:100%}
+    #scr-main.active{display:flex}
   </style>
 </head>
 <body>
-<div id="root"></div>
+<div id="app">
 
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
-  }
-</script>
+  <!-- LOADING -->
+  <div id="scr-loading" class="screen active" style="align-items:center;justify-content:center;gap:14px">
+    <div class="spinner"></div>
+    <div style="font-size:13px;color:#aaa">Ładowanie Dom.io…</div>
+  </div>
+
+  <!-- LOGIN -->
+  <div id="scr-login" class="screen" style="overflow-y:auto;padding:32px 16px 24px;display:block;flex:1"></div>
+
+  <!-- MAIN -->
+  <div id="scr-main" class="screen">
+    <div class="header" id="main-header"></div>
+    <div id="main-content" class="scroll"></div>
+    <div class="bottom-nav" id="main-nav"></div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <!-- MODAL -->
+  <div class="modal-bg" id="modal">
+    <div class="modal-box" id="modal-box"></div>
+  </div>
+
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-<script type="text/babel">
-const { useState, useEffect, useRef, useCallback } = React;
-
-// ═══════════════════════════════════════════════
-//  CONFIG — wbudowany, bracia nie muszą nic wklejać
-// ═══════════════════════════════════════════════
-const HARDCODED_CONFIG = {
+<script>
+// ═══════════════════════════════════════
+//  FIREBASE CONFIG
+// ═══════════════════════════════════════
+const FB_CFG = {
   apiKey: "AIzaSyACkSuZ_K14NFIbYj9YDXxXDJY9wDY3hcc",
   authDomain: "domio-7ebcd.firebaseapp.com",
   databaseURL: "https://domio-7ebcd-default-rtdb.europe-west1.firebasedatabase.app",
@@ -70,25 +93,21 @@ const HARDCODED_CONFIG = {
   appId: "1:636583182165:web:776f117677b880bebd39dc"
 };
 
-const FB_KEY  = 'domio-firebase-cfg-v3';
-const REM_KEY = 'domio-reminders-v2';
-
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════
 //  DANE
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════
 const BROS = [
   { name:'Bartek',  init:'B', accent:'#EF9F27', light:'#FAEEDA', dark:'#8C5A0E' },
   { name:'Kuba',    init:'K', accent:'#1D9E75', light:'#E1F5EE', dark:'#0A5E41' },
   { name:'Mikołaj', init:'M', accent:'#378ADD', light:'#E6F1FB', dark:'#0E4A87' },
 ];
 
-// rot3i = indeks rotacji (każde zadanie obraca się osobno → ~3 zadania/tydzień/brat)
 const TASKS = [
   { id:'zmywanie',    name:'Zmywanie naczyń',    icon:'🍽️', assign:'rot3', rot3i:0, note:'Codziennie po kolacji' },
   { id:'odkurzanie',  name:'Odkurzanie',          icon:'🧹', assign:'rot3', rot3i:1, note:'Raz w tygodniu' },
   { id:'smieci',      name:'Wynoszenie śmieci',   icon:'🗑️', assign:'rot3', rot3i:2, note:'Wtorek i piątek' },
   { id:'laz-wspolna', name:'Łazienka wspólna',    icon:'🚿', assign:'rot2km',        note:'Kuba / Mikołaj na zmianę' },
-  { id:'laz-bartek',  name:'Łazienka Bartka',     icon:'🛁', assign:['Bartek'],      note:'Tylko Bartek' },
+  { id:'laz-bartek',  name:'Łazienka Bartka',     icon:'🛁', assign:'bartek',        note:'Tylko Bartek' },
   { id:'salon',       name:'Sprzątanie salonu',   icon:'🛋️', assign:'rot3', rot3i:3, note:'Raz w tygodniu' },
   { id:'pranie',      name:'Pranie',              icon:'👕', assign:'rot3', rot3i:4, note:'Raz w tygodniu' },
   { id:'wieszanie',   name:'Wieszanie prania',    icon:'🪣', assign:'rot3', rot3i:5, note:'Po każdym praniu' },
@@ -96,743 +115,767 @@ const TASKS = [
   { id:'generalne',   name:'Generalne sprzątanie',icon:'✨', assign:'all',           note:'Co 2 tyg. — podłogi + okna' },
 ];
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════
+let db, user = null, page = 'dashboard';
+let comps = [], swaps = {};
+let notifOk = false, online = true;
+let reminders = {};
+let remTimerRef = null;
+const connectedAt = new Date().toISOString();
+let listenerUp = false;
+
+try { reminders = JSON.parse(localStorage.getItem('domio-rem') || '{}'); } catch {}
+
+// ═══════════════════════════════════════
 //  HELPERS
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════
 const getBro = n => BROS.find(b => b.name === n) || BROS[0];
 
-// Każde rot3 zadanie rotuje niezależnie → równy podział co tydzień
-const getAssigned = (task, wk, swaps = {}) => {
-  const sw = swaps[task.id];
-  if (sw?.status === 'accepted') return [sw.to];
-  if (task.assign === 'rot3')   return [BROS[(task.rot3i + wk) % 3].name];
-  if (task.assign === 'rot2km') return [wk % 2 === 0 ? 'Kuba' : 'Mikołaj'];
-  if (task.assign === 'all')    return BROS.map(b => b.name);
-  return task.assign;
-};
-
-const getWeek = () => {
+function getWeek() {
   const d = new Date(), s = new Date(d.getFullYear(), 0, 1);
   return Math.ceil(((d - s) / 86400000 + s.getDay() + 1) / 7);
-};
-const fmt = iso => {
+}
+const WK = getWeek();
+const WKEY = new Date().getFullYear() + '-W' + WK;
+
+function getAssigned(task) {
+  const sw = swaps[task.id];
+  if (sw && sw.status === 'accepted') return [sw.to];
+  if (task.assign === 'rot3')   return [BROS[(task.rot3i + WK) % 3].name];
+  if (task.assign === 'rot2km') return [WK % 2 === 0 ? 'Kuba' : 'Mikołaj'];
+  if (task.assign === 'all')    return BROS.map(b => b.name);
+  if (task.assign === 'bartek') return ['Bartek'];
+  return ['Bartek'];
+}
+
+function isDone(id, who) {
+  const w = who || user;
+  return comps.some(c => c.id === id && c.wk === WKEY && c.who === w);
+}
+function getComp(id, who) {
+  const w = who || user;
+  return comps.find(c => c.id === id && c.wk === WKEY && c.who === w);
+}
+function mScore(name) {
+  const s = new Date(); s.setDate(1); s.setHours(0,0,0,0);
+  return comps.filter(c => c.who === name && new Date(c.when) >= s).length;
+}
+function myTasks() {
+  return TASKS.filter(t => getAssigned(t).includes(user));
+}
+function fmt(iso) {
   const d = new Date(iso);
-  return d.toLocaleDateString('pl-PL', {day:'numeric', month:'short'}) + ' ' +
-    d.toLocaleTimeString('pl-PL', {hour:'2-digit', minute:'2-digit'});
-};
-const fmtRel = iso => {
+  return d.toLocaleDateString('pl-PL',{day:'numeric',month:'short'}) + ' ' +
+    d.toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit'});
+}
+function fmtRel(iso) {
   const diff = Date.now() - new Date(iso);
-  if (diff < 60000)   return 'przed chwilą';
-  if (diff < 3600000) return `${Math.floor(diff/60000)} min temu`;
-  if (diff < 86400000) return `${Math.floor(diff/3600000)} godz. temu`;
+  if (diff < 60000)    return 'przed chwilą';
+  if (diff < 3600000)  return Math.floor(diff/60000) + ' min temu';
+  if (diff < 86400000) return Math.floor(diff/3600000) + ' godz. temu';
   return fmt(iso);
-};
-
-let db = null, fbApp = null;
-function tryInitFirebase(cfg) {
-  try {
-    if (!fbApp) fbApp = firebase.initializeApp(cfg);
-    db = firebase.database();
-    return true;
-  } catch(e) { console.error(e); return false; }
 }
 
-// ═══════════════════════════════════════════════
-//  AVATAR
-// ═══════════════════════════════════════════════
-function Av({ name, size = 36 }) {
-  const b = getBro(name);
-  return (
-    <div className="av" style={{
-      width:size, height:size, background:b.light, color:b.dark,
-      fontSize:Math.round(size*.42), border:`2px solid ${b.accent}`,
-    }}>{b.init}</div>
-  );
-}
-
-// ═══════════════════════════════════════════════
-//  APP
-// ═══════════════════════════════════════════════
-function App() {
-  const [screen,    setScreen]    = useState('loading');
-  const [page,      setPage]      = useState('dashboard');
-  const [user,      setUser]      = useState(null);
-  const [comps,     setComps]     = useState([]);
-  const [swaps,     setSwaps]     = useState({});
-  const [notifOk,   setNotifOk]   = useState(false);
-  const [toast,     setToast]     = useState(null);
-  const [swapModal, setSwapModal] = useState(null); // null | taskId
-  const [online,    setOnline]    = useState(true);
-  const [reminders, setReminders] = useState(() => {
-    try { return JSON.parse(localStorage.getItem(REM_KEY) || '{}'); } catch { return {}; }
+// ═══════════════════════════════════════
+//  DOM HELPERS
+// ═══════════════════════════════════════
+function el(tag, props, ...children) {
+  const e = document.createElement(tag);
+  if (props) {
+    Object.entries(props).forEach(([k, v]) => {
+      if (k === 'style' && typeof v === 'object') Object.assign(e.style, v);
+      else if (k === 'class') e.className = v;
+      else if (k.startsWith('on')) e.addEventListener(k.slice(2).toLowerCase(), v);
+      else e.setAttribute(k, v);
+    });
+  }
+  children.flat().forEach(c => {
+    if (c == null || c === false) return;
+    e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
   });
+  return e;
+}
 
-  const wk      = getWeek();
-  const wKey    = `${new Date().getFullYear()}-W${wk}`;
-  const ub      = user ? getBro(user) : null;
-  const userRef = useRef(user);
-  const remTimers  = useRef({});
-  const connectedAt = useRef(new Date().toISOString());
-  const listenerUp  = useRef(false);
-
-  useEffect(() => { userRef.current = user; }, [user]);
-
-  // ── Boot ─────────────────────────────────────
-  useEffect(() => {
-    if (tryInitFirebase(HARDCODED_CONFIG)) {
-      localStorage.setItem(FB_KEY, JSON.stringify(HARDCODED_CONFIG));
-      bootListeners();
-      setScreen('login');
-    } else {
-      setScreen('error');
+function av(name, size) {
+  size = size || 36;
+  const b = getBro(name);
+  return el('div', {
+    class: 'av',
+    style: {
+      width: size+'px', height: size+'px',
+      background: b.light, color: b.dark,
+      fontSize: Math.round(size*.42)+'px',
+      border: '2px solid '+b.accent,
     }
-    setNotifOk(Notification.permission === 'granted');
-  }, []);
+  }, b.init);
+}
 
-  // ── Firebase listeners ────────────────────────
-  const bootListeners = useCallback(() => {
-    if (!db || listenerUp.current) return;
-    listenerUp.current = true;
-    connectedAt.current = new Date().toISOString();
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
 
-    db.ref('.info/connected').on('value', s => setOnline(!!s.val()));
+function showModal(content) {
+  const box = document.getElementById('modal-box');
+  box.innerHTML = '';
+  box.appendChild(content);
+  document.getElementById('modal').classList.add('show');
+}
+function hideModal() {
+  document.getElementById('modal').classList.remove('show');
+}
+document.getElementById('modal').addEventListener('click', function(e) {
+  if (e.target === this) hideModal();
+});
+
+function showScreen(id) {
+  ['scr-loading','scr-login','scr-main'].forEach(s => {
+    const el = document.getElementById(s);
+    el.classList.remove('active');
+    el.style.display = 'none';
+  });
+  const target = document.getElementById(id);
+  target.style.display = id === 'scr-main' ? 'flex' : 'block';
+  target.classList.add('active');
+}
+
+// ═══════════════════════════════════════
+//  FIREBASE
+// ═══════════════════════════════════════
+function boot() {
+  try {
+    firebase.initializeApp(FB_CFG);
+    db = firebase.database();
+  } catch(e) {
+    console.error(e);
+    showScreen('scr-loading');
+    document.getElementById('scr-loading').innerHTML =
+      '<div style="padding:32px;text-align:center"><div style="font-size:32px">⚠️</div><div style="font-weight:800;font-size:16px;margin-top:12px">Błąd połączenia</div><div style="color:#888;font-size:13px;margin-top:8px">Sprawdź internet i odśwież.</div></div>';
+    return;
+  }
+
+  if (!listenerUp) {
+    listenerUp = true;
+
+    db.ref('.info/connected').on('value', s => {
+      online = !!s.val();
+      if (user) renderHeader();
+    });
 
     db.ref('domio/completions').on('value', snap => {
       const raw = snap.val() || {};
-      setComps(Object.entries(raw).map(([k,v]) => ({...v, _key:k})));
+      comps = Object.entries(raw).map(([k,v]) => ({...v, _key:k}));
+      if (user) render();
     });
 
-    db.ref(`domio/swaps/${wKey}`).on('value', snap => {
-      setSwaps(snap.val() || {});
+    db.ref('domio/swaps/' + WKEY).on('value', snap => {
+      swaps = snap.val() || {};
+      if (user) render();
     });
 
     // Powiadomienie gdy brat coś zrobi
     db.ref('domio/completions').on('child_added', snap => {
       const c = snap.val();
-      if (!c || c.when <= connectedAt.current) return;
-      const who = userRef.current;
-      if (c.who !== who && who && Notification.permission === 'granted') {
+      if (!c || c.when <= connectedAt || !user) return;
+      if (c.who !== user && Notification.permission === 'granted') {
         const task = TASKS.find(t => t.id === c.id);
         new Notification('Dom.io 🏠', {
-          body: `${c.who} właśnie zrobił(a): ${task?.name || c.id}`,
+          body: c.who + ' właśnie zrobił(a): ' + (task ? task.name : c.id),
           tag: snap.key,
         });
       }
     });
 
     // Powiadomienie o propozycji zamiany
-    db.ref(`domio/swaps/${wKey}`).on('child_added', snap => {
+    db.ref('domio/swaps/' + WKEY).on('child_added', snap => {
       const sw = snap.val();
-      if (!sw || sw.when <= connectedAt.current) return;
-      const who = userRef.current;
-      if (sw.to === who && sw.status === 'pending' && Notification.permission === 'granted') {
+      if (!sw || sw.when <= connectedAt || !user) return;
+      if (sw.to === user && sw.status === 'pending' && Notification.permission === 'granted') {
         const task = TASKS.find(t => t.id === snap.key);
         new Notification('Dom.io 🔄 Propozycja zamiany', {
-          body: `${sw.from} proponuje zamianę: ${task?.name}`,
-          tag: 'swap-' + snap.key,
+          body: sw.from + ' chce zamienić się zadaniem: ' + (task ? task.name : snap.key),
         });
       }
     });
-  }, []);
+  }
 
-  // ── Przypomnienia ─────────────────────────────
-  useEffect(() => {
-    if (!user) return;
-    const r = reminders[user];
-    if (!r?.enabled || !r?.time) return;
-    if (remTimers.current[user]) clearTimeout(remTimers.current[user]);
-    scheduleReminder(user, r.time);
-  }, [user, reminders]);
-
-  const scheduleReminder = (name, time) => {
-    const [h, m] = time.split(':').map(Number);
-    const now = new Date(), target = new Date(now);
-    target.setHours(h, m, 0, 0);
-    if (target <= now) target.setDate(target.getDate() + 1);
-    remTimers.current[name] = setTimeout(() => {
-      const myT  = TASKS.filter(t => getAssigned(t, wk, swaps).includes(name));
-      const undone = myT.filter(t => !comps.some(c => c.id===t.id && c.wk===wKey && c.who===name));
-      if (Notification.permission === 'granted') {
-        new Notification('Dom.io ⏰ Przypomnienie', {
-          body: undone.length > 0
-            ? `Zostało Ci ${undone.length} zadanie(ń):\n${undone.map(t=>t.name).join(' · ')}`
-            : '🎉 Wszystkie Twoje zadania zrobione!',
-          tag: 'reminder',
-        });
-      }
-      if (reminders[name]?.enabled) scheduleReminder(name, time);
-    }, target - now);
-  };
-
-  // ── Toast ─────────────────────────────────────
-  useEffect(() => {
-    if (!toast) return;
-    const t = setTimeout(() => setToast(null), 2400);
-    return () => clearTimeout(t);
-  }, [toast]);
-
-  // ── Akcje ─────────────────────────────────────
-  const markDone = id => {
-    if (!user || isDone(id) || !db) return;
-    const task = TASKS.find(t => t.id === id);
-    db.ref('domio/completions').push({ id, who:user, when:new Date().toISOString(), wk:wKey });
-    setToast(`✓ ${task?.name}`);
-  };
-
-  const proposeSwap = (taskId, targetBro) => {
-    if (!db) return;
-    db.ref(`domio/swaps/${wKey}/${taskId}`).set({
-      from: user, to: targetBro, status: 'pending', when: new Date().toISOString()
-    });
-    setSwapModal(null);
-    setToast(`🔄 Propozycja wysłana do ${targetBro}!`);
-  };
-
-  const respondSwap = (taskId, accept) => {
-    if (!db) return;
-    if (accept) {
-      db.ref(`domio/swaps/${wKey}/${taskId}/status`).set('accepted');
-      setToast('✅ Zamiana zaakceptowana!');
-    } else {
-      db.ref(`domio/swaps/${wKey}/${taskId}`).remove();
-      setToast('❌ Propozycja odrzucona.');
-    }
-  };
-
-  const cancelSwap = taskId => {
-    if (!db) return;
-    db.ref(`domio/swaps/${wKey}/${taskId}`).remove();
-    setToast('Propozycja cofnięta.');
-  };
-
-  const enableNotif = async () => {
-    if (!('Notification' in window)) { setToast('Przeglądarka nie obsługuje powiadomień'); return; }
-    const p = await Notification.requestPermission();
-    if (p === 'granted') { setNotifOk(true); setToast('🔔 Powiadomienia włączone!'); }
-    else setToast('Odmówiono dostępu do powiadomień.');
-  };
-
-  const updateReminder = (enabled, time) => {
-    const updated = { ...reminders, [user]: { enabled, time: time || '20:00' } };
-    setReminders(updated);
-    localStorage.setItem(REM_KEY, JSON.stringify(updated));
-  };
-
-  // ── Query helpers ─────────────────────────────
-  const isDone = (id, who) => comps.some(c => c.id===id && c.wk===wKey && c.who===(who??user));
-  const getC   = (id, who) => comps.find(c => c.id===id && c.wk===wKey && c.who===(who??user));
-  const mScore = name => {
-    const s = new Date(); s.setDate(1); s.setHours(0,0,0,0);
-    return comps.filter(c => c.who===name && new Date(c.when)>=s).length;
-  };
-
-  const myTasks       = user ? TASKS.filter(t => getAssigned(t,wk,swaps).includes(user)) : [];
-  const myDone        = myTasks.filter(t => isDone(t.id)).length;
-  const pendingForMe  = Object.entries(swaps).filter(([,s]) => s.to===user && s.status==='pending');
-  const myOutgoing    = Object.entries(swaps).filter(([,s]) => s.from===user && s.status==='pending');
-
-  // Shared style
-  const C = { background:'#fff', border:'1px solid #ebebeb', borderRadius:14, padding:'14px 15px', marginBottom:8 };
-
-  // ════════════════════════════════════════════════
-  //  LOADING
-  // ════════════════════════════════════════════════
-  if (screen === 'loading') return (
-    <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',flexDirection:'column',gap:14}}>
-      <div className="spinner"/>
-      <div style={{fontSize:13,color:'#aaa'}}>Ładowanie Dom.io…</div>
-    </div>
-  );
-
-  if (screen === 'error') return (
-    <div style={{padding:'32px 18px',textAlign:'center'}}>
-      <div style={{fontSize:32,marginBottom:12}}>⚠️</div>
-      <div style={{fontWeight:800,fontSize:16}}>Błąd połączenia z Firebase</div>
-      <div style={{fontSize:13,color:'#888',marginTop:8}}>Sprawdź połączenie internetowe i odśwież stronę.</div>
-    </div>
-  );
-
-  // ════════════════════════════════════════════════
-  //  LOGIN
-  // ════════════════════════════════════════════════
-  if (!user) return (
-    <div style={{height:'100vh',overflowY:'auto',padding:'32px 16px 24px'}}>
-      <div style={{textAlign:'center',marginBottom:28}}>
-        <div style={{fontSize:30,fontWeight:800,letterSpacing:'-1px'}}>Dom.io 🏠</div>
-        <div style={{fontSize:13,color:'#888',marginTop:5}}>Kto to?</div>
-        {!online && <div style={{marginTop:8,fontSize:12,color:'#F59E0B',fontWeight:700}}>⚠️ Brak połączenia z internetem</div>}
-      </div>
-      {BROS.map(b => {
-        const bt = TASKS.filter(t => getAssigned(t,wk,{}).includes(b.name));
-        return (
-          <div key={b.name} onClick={() => setUser(b.name)} style={{
-            ...C, cursor:'pointer', display:'flex', alignItems:'center', gap:14,
-            borderLeft:`4px solid ${b.accent}`,
-          }}>
-            <Av name={b.name} size={52}/>
-            <div style={{flex:1}}>
-              <div style={{fontWeight:800,fontSize:18}}>{b.name}</div>
-              <div style={{fontSize:12,color:'#888',marginTop:2}}>
-                {bt.length} zadań w tym tygodniu
-              </div>
-            </div>
-            <div style={{textAlign:'right'}}>
-              <div style={{fontSize:22,fontWeight:800,color:b.accent}}>{mScore(b.name)}</div>
-              <div style={{fontSize:10,color:'#bbb'}}>ten miesiąc</div>
-            </div>
-          </div>
-        );
-      })}
-      <div style={{textAlign:'center',marginTop:16,fontSize:11,color:'#ccc'}}>
-        Tydzień {wk} · {new Date().toLocaleDateString('pl-PL',{month:'long',year:'numeric'})}
-        {online && <span style={{color:'#1D9E75'}}> · 🔥 live</span>}
-      </div>
-    </div>
-  );
-
-  // ════════════════════════════════════════════════
-  //  MAIN APP
-  // ════════════════════════════════════════════════
-  const uRem = reminders[user] || { enabled:false, time:'20:00' };
-
-  return (
-    <>
-      {/* Toast */}
-      {toast && <div className="toast">{toast}</div>}
-
-      {/* Swap modal */}
-      {swapModal && (() => {
-        const task    = TASKS.find(t => t.id === swapModal);
-        const others  = BROS.filter(b => b.name !== user);
-        return (
-          <div className="modal-bg" onClick={() => setSwapModal(null)}>
-            <div className="modal-box" onClick={e => e.stopPropagation()}>
-              <div style={{fontWeight:800,fontSize:17,marginBottom:6}}>🔄 Zaproponuj zamianę</div>
-              <div style={{fontSize:13,color:'#888',marginBottom:18}}>
-                Chcesz oddać: <b>{task?.icon} {task?.name}</b>
-              </div>
-              {others.map(b => (
-                <button key={b.name} onClick={() => proposeSwap(swapModal, b.name)} style={{
-                  width:'100%',marginBottom:10,padding:'14px',
-                  background:b.light, color:b.dark,
-                  border:`2px solid ${b.accent}`,borderRadius:12,
-                  fontSize:15,fontWeight:800,
-                  display:'flex',alignItems:'center',gap:12,
-                }}>
-                  <Av name={b.name} size={36}/>
-                  <span>Zamień z {b.name}</span>
-                </button>
-              ))}
-              <button onClick={() => setSwapModal(null)} style={{
-                width:'100%',padding:'12px',border:'1px solid #ebebeb',
-                borderRadius:12,background:'transparent',fontSize:14,color:'#888',
-              }}>Anuluj</button>
-            </div>
-          </div>
-        );
-      })()}
-
-      {/* Header */}
-      <div className="header">
-        <div style={{display:'flex',alignItems:'center',gap:10}}>
-          <Av name={user} size={32}/>
-          <div>
-            <div style={{fontWeight:800,fontSize:14,display:'flex',alignItems:'center',gap:6}}>
-              {user}
-              <span style={{fontSize:9,fontWeight:600,padding:'1px 6px',borderRadius:99,
-                background:online?'#E1F5EE':'#FFFBEB',
-                color:online?'#1D9E75':'#F59E0B'}}>
-                {online?'🔥 LIVE':'⚠️ offline'}
-              </span>
-            </div>
-            <div style={{fontSize:10,color:'#aaa'}}>
-              {page==='mine' ? `${myDone}/${myTasks.length} zrobionych` : `Tydzień ${wk}`}
-            </div>
-          </div>
-        </div>
-        <div style={{display:'flex',gap:5}}>
-          <button onClick={notifOk?undefined:enableNotif}
-            title={notifOk?'Powiadomienia aktywne':'Włącz powiadomienia'}
-            style={{padding:'6px 9px',border:`1px solid ${notifOk?ub.accent:'#ddd'}`,
-              borderRadius:10,background:notifOk?ub.light:'transparent',fontSize:16,
-              color:notifOk?ub.dark:'#bbb'}}>
-            {notifOk?'🔔':'🔕'}
-          </button>
-          <button onClick={() => {setUser(null);setPage('dashboard');}}
-            style={{padding:'6px 11px',border:'1px solid #ddd',borderRadius:10,
-              background:'transparent',fontSize:12,fontWeight:700,color:'#888'}}>
-            Zmień
-          </button>
-        </div>
-      </div>
-
-      {/* ──────── DASHBOARD ──────── */}
-      {page === 'dashboard' && (
-        <div className="scroll">
-          {/* Progress kart */}
-          <div style={{display:'grid',gridTemplateColumns:'repeat(3, 1fr)',gap:7,marginBottom:12}}>
-            {BROS.map(b => {
-              const bt = TASKS.filter(t => getAssigned(t,wk,swaps).includes(b.name));
-              const bd = bt.filter(t => isDone(t.id, b.name)).length;
-              return (
-                <div key={b.name} style={{background:'#fff',border:'1px solid #ebebeb',
-                  borderTop:`4px solid ${b.accent}`,borderRadius:14,padding:'10px 8px',textAlign:'center'}}>
-                  <div style={{display:'flex',justifyContent:'center',marginBottom:4}}><Av name={b.name} size={26}/></div>
-                  <div style={{fontWeight:700,fontSize:12}}>{b.name}</div>
-                  <div style={{fontSize:11,fontWeight:700,marginTop:1,
-                    color:bd===bt.length&&bt.length>0?'#0A5E41':'#bbb'}}>
-                    {bd}/{bt.length}
-                  </div>
-                  <div className="bar-track" style={{marginTop:4}}>
-                    <div className="bar-fill" style={{
-                      width:`${bt.length?Math.round((bd/bt.length)*100):0}%`,
-                      background:b.accent}}/>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Task list */}
-          {TASKS.map(task => {
-            const resp    = getAssigned(task, wk, swaps);
-            const isAll   = task.assign === 'all';
-            const doneWho = BROS.filter(b => isDone(task.id, b.name));
-            const allDone = isAll ? doneWho.length===BROS.length : doneWho.length>0;
-            const sComp   = !isAll && doneWho[0] ? getC(task.id, doneWho[0].name) : null;
-            const sw      = swaps[task.id];
-            const lColor  = allDone?'#1D9E75':(resp.length===1?getBro(resp[0]).accent:'#e0e0e0');
-            return (
-              <div key={task.id} style={{...C,display:'flex',alignItems:'center',gap:10,
-                borderLeft:`4px solid ${lColor}`,opacity:allDone?0.45:1}}>
-                <div style={{width:38,height:38,borderRadius:11,flexShrink:0,
-                  background:allDone?'#E1F5EE':'#f5f5f5',
-                  display:'flex',alignItems:'center',justifyContent:'center',
-                  fontSize:allDone?16:20}}>
-                  {allDone?'✓':task.icon}
-                </div>
-                <div style={{flex:1,minWidth:0}}>
-                  <div style={{fontWeight:700,fontSize:13,marginBottom:3,
-                    color:allDone?'#bbb':'#1a1a1a',
-                    textDecoration:allDone?'line-through':'none'}}>
-                    {task.name}
-                    {sw?.status==='pending' && (
-                      <span style={{fontSize:10,marginLeft:6,color:'#F59E0B',fontWeight:700}}>⏳ zamiana…</span>
-                    )}
-                    {sw?.status==='accepted' && (
-                      <span style={{fontSize:10,marginLeft:6,color:'#1D9E75',fontWeight:700}}>🔄 zamieniono</span>
-                    )}
-                  </div>
-                  {isAll ? (
-                    <div style={{display:'flex',gap:3,flexWrap:'wrap'}}>
-                      {BROS.map(b => {
-                        const bd = isDone(task.id, b.name);
-                        return (
-                          <span key={b.name} className="badge" style={{
-                            background:bd?b.light:'#f5f5f5',
-                            color:bd?b.dark:'#ccc',
-                            border:`1px solid ${bd?b.accent:'#ebebeb'}`}}>
-                            {bd&&'✓ '}{b.name}
-                          </span>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <div style={{display:'flex',alignItems:'center',gap:6}}>
-                      {resp.map(n => (
-                        <div key={n} style={{display:'flex',alignItems:'center',gap:3}}>
-                          <Av name={n} size={16}/>
-                          <span style={{fontSize:11,color:'#888'}}>{n}</span>
-                        </div>
-                      ))}
-                      {sComp && (
-                        <span style={{fontSize:10,color:'#0A5E41'}}>· {fmtRel(sComp.when)}</span>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {/* ──────── MOJE ZADANIA ──────── */}
-      {page === 'mine' && (
-        <div className="scroll">
-
-          {/* Przychodzące propozycje zamiany */}
-          {pendingForMe.length > 0 && (
-            <div style={{background:'#FFFBEB',border:'1px solid #FDE68A',borderRadius:14,
-              padding:'12px 14px',marginBottom:12}}>
-              <div style={{fontWeight:800,fontSize:13,color:'#92400E',marginBottom:8}}>
-                🔄 Propozycje zamiany ({pendingForMe.length})
-              </div>
-              {pendingForMe.map(([taskId, sw]) => {
-                const task = TASKS.find(t => t.id === taskId);
-                return (
-                  <div key={taskId} style={{display:'flex',alignItems:'center',gap:10,
-                    padding:'8px 0',borderTop:'1px solid #FDE68A'}}>
-                    <div style={{flex:1}}>
-                      <div style={{fontWeight:700,fontSize:13}}>
-                        <Av name={sw.from} size={18} style={{display:'inline-flex',verticalAlign:'middle',marginRight:4}}/>
-                        {' '}{sw.from} → {task?.icon} {task?.name}
-                      </div>
-                      <div style={{fontSize:11,color:'#A16207',marginTop:1}}>
-                        Przejmiesz to zadanie od {sw.from}
-                      </div>
-                    </div>
-                    <button onClick={() => respondSwap(taskId, true)} style={{
-                      padding:'7px 11px',background:'#1D9E75',color:'#fff',
-                      borderRadius:9,fontSize:12,fontWeight:800}}>
-                      ✓ OK
-                    </button>
-                    <button onClick={() => respondSwap(taskId, false)} style={{
-                      padding:'7px 11px',background:'#FEE2E2',color:'#DC2626',
-                      border:'1px solid #FCA5A5',borderRadius:9,fontSize:12,fontWeight:800}}>
-                      ✗ Nie
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          {/* Wychodzące propozycje */}
-          {myOutgoing.length > 0 && (
-            <div style={{background:'#F0F9FF',border:'1px solid #BAE6FD',borderRadius:14,
-              padding:'12px 14px',marginBottom:12}}>
-              <div style={{fontWeight:800,fontSize:13,color:'#0369A1',marginBottom:8}}>
-                ⏳ Oczekujące zamiany
-              </div>
-              {myOutgoing.map(([taskId, sw]) => {
-                const task = TASKS.find(t => t.id === taskId);
-                return (
-                  <div key={taskId} style={{display:'flex',alignItems:'center',gap:10,
-                    padding:'8px 0',borderTop:'1px solid #BAE6FD'}}>
-                    <div style={{flex:1,fontSize:13}}>
-                      {task?.icon} {task?.name} → <b>{sw.to}</b>
-                      <div style={{fontSize:11,color:'#0284C7',marginTop:1}}>Czekam na odpowiedź…</div>
-                    </div>
-                    <button onClick={() => cancelSwap(taskId)} style={{
-                      padding:'6px 10px',background:'transparent',color:'#0369A1',
-                      border:'1px solid #BAE6FD',borderRadius:9,fontSize:11,fontWeight:700}}>
-                      Cofnij
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          {/* Moje zadania */}
-          {myTasks.length === 0 && pendingForMe.length === 0 ? (
-            <div style={{...C,textAlign:'center',padding:'40px 16px'}}>
-              <div style={{fontSize:40,marginBottom:14}}>🎉</div>
-              <div style={{fontWeight:800,fontSize:16}}>Ten tydzień masz wolny!</div>
-              <div style={{fontSize:13,color:'#aaa',marginTop:6}}>Zasłużyłeś na odpoczynek.</div>
-            </div>
-          ) : myTasks.map(task => {
-            const d  = isDone(task.id);
-            const c  = d ? getC(task.id) : null;
-            const sw = swaps[task.id];
-            const hasOutgoing = sw?.from===user && sw?.status==='pending';
-            return (
-              <div key={task.id} style={{...C,display:'flex',alignItems:'center',gap:12,
-                borderLeft:`4px solid ${d?'#1D9E75':ub.accent}`,opacity:d?0.5:1}}>
-                <div style={{width:44,height:44,borderRadius:12,flexShrink:0,
-                  background:d?'#E1F5EE':ub.light,
-                  display:'flex',alignItems:'center',justifyContent:'center',
-                  fontSize:d?18:22,color:d?'#0A5E41':ub.dark}}>
-                  {d?'✓':task.icon}
-                </div>
-                <div style={{flex:1,minWidth:0}}>
-                  <div style={{fontWeight:700,fontSize:15,marginBottom:2,
-                    color:d?'#aaa':'#1a1a1a',textDecoration:d?'line-through':'none'}}>
-                    {task.name}
-                  </div>
-                  <div style={{fontSize:11,color:'#aaa'}}>
-                    {c ? `Zrobione ${fmtRel(c.when)}` : task.note}
-                  </div>
-                </div>
-                {!d && (
-                  <div style={{display:'flex',flexDirection:'column',gap:5,flexShrink:0}}>
-                    <button onClick={() => markDone(task.id)} style={{
-                      background:ub.accent,color:'#fff',border:'none',
-                      borderRadius:10,padding:'8px 12px',fontSize:13,fontWeight:800,
-                      display:'flex',alignItems:'center',gap:3}}>
-                      ✓ Gotowe
-                    </button>
-                    {!hasOutgoing && task.assign !== 'all' && !Array.isArray(task.assign) && (
-                      <button onClick={() => setSwapModal(task.id)} style={{
-                        background:'transparent',color:ub.dark,
-                        border:`1px solid ${ub.accent}`,
-                        borderRadius:10,padding:'5px 12px',fontSize:11,fontWeight:700}}>
-                        🔄 Zamień
-                      </button>
-                    )}
-                    {hasOutgoing && (
-                      <span style={{fontSize:10,color:'#F59E0B',fontWeight:700,textAlign:'center'}}>⏳ czeka…</span>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {/* ──────── WYNIKI ──────── */}
-      {page === 'scores' && (() => {
-        const sorted = [...BROS].sort((a,b) => mScore(b.name)-mScore(a.name));
-        const maxS   = Math.max(...BROS.map(b=>mScore(b.name)), 1);
-        const recent = [...comps].sort((a,b)=>new Date(b.when)-new Date(a.when)).slice(0,25);
-        const medals = ['🥇','🥈','🥉'];
-        return (
-          <div className="scroll">
-            <div style={{fontSize:12,color:'#bbb',marginBottom:10,textTransform:'capitalize'}}>
-              Wyniki · {new Date().toLocaleDateString('pl-PL',{month:'long',year:'numeric'})}
-            </div>
-            <div style={{...C,marginBottom:14}}>
-              {sorted.map((b,i) => (
-                <div key={b.name} style={{display:'flex',alignItems:'center',gap:10,padding:'11px 0',
-                  borderBottom:i<2?'1px solid #f5f5f5':'none'}}>
-                  <span style={{fontSize:20,width:26,textAlign:'center'}}>{medals[i]}</span>
-                  <Av name={b.name} size={34}/>
-                  <div style={{flex:1}}>
-                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:5}}>
-                      <span style={{fontWeight:700,fontSize:14}}>{b.name}</span>
-                      <span style={{fontSize:16,fontWeight:800,color:b.accent}}>{mScore(b.name)}</span>
-                    </div>
-                    <div className="bar-track">
-                      <div className="bar-fill" style={{width:`${Math.round((mScore(b.name)/maxS)*100)}%`,background:b.accent}}/>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div style={{fontSize:12,color:'#bbb',marginBottom:8}}>Ostatnia aktywność</div>
-            {recent.length===0
-              ? <div style={{...C,textAlign:'center',color:'#ccc',fontSize:13,padding:'24px'}}>Brak aktywności 🧹</div>
-              : recent.map((c,i) => {
-                  const task = TASKS.find(t=>t.id===c.id);
-                  return (
-                    <div key={i} className="card-sm" style={{display:'flex',alignItems:'center',gap:10}}>
-                      <Av name={c.who} size={28}/>
-                      <div style={{flex:1}}>
-                        <span style={{fontWeight:700,fontSize:13}}>{c.who}</span>
-                        <span style={{fontSize:13,color:'#555'}}> — {task?.name||c.id}</span>
-                        <div style={{fontSize:11,color:'#bbb',marginTop:1}}>{fmtRel(c.when)}</div>
-                      </div>
-                      <span style={{fontSize:18}}>{task?.icon||'📋'}</span>
-                    </div>
-                  );
-                })
-            }
-          </div>
-        );
-      })()}
-
-      {/* ──────── USTAWIENIA ──────── */}
-      {page === 'settings' && (
-        <div className="scroll">
-          <div style={{...C,marginBottom:10}}>
-            <div style={{fontWeight:800,fontSize:15,marginBottom:14}}>🔔 Powiadomienia push</div>
-            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:notifOk?0:12}}>
-              <div>
-                <div style={{fontWeight:700,fontSize:14}}>Gdy brat zrobi zadanie</div>
-                <div style={{fontSize:12,color:'#aaa',marginTop:2}}>
-                  {notifOk?'✓ Aktywne':'Wyłączone'}
-                </div>
-              </div>
-              <button onClick={notifOk?undefined:enableNotif} style={{
-                padding:'8px 14px',border:`1px solid ${notifOk?ub.accent:'#ddd'}`,
-                borderRadius:10,background:notifOk?ub.light:'transparent',
-                fontSize:13,fontWeight:700,color:notifOk?ub.dark:'#555',
-                cursor:notifOk?'default':'pointer'}}>
-                {notifOk?'✓ Włączone':'Włącz'}
-              </button>
-            </div>
-            {!notifOk && (
-              <div style={{background:'#FFFBEB',border:'1px solid #FDE68A',borderRadius:10,
-                padding:'10px 12px',fontSize:12,color:'#92400E'}}>
-                💡 Włącz powiadomienia żeby dostawać alerty o zadaniach i propozycjach zamiany.
-              </div>
-            )}
-          </div>
-
-          <div style={{...C,marginBottom:10}}>
-            <div style={{fontWeight:800,fontSize:15,marginBottom:14}}>⏰ Codzienne przypomnienie</div>
-            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}}>
-              <div>
-                <div style={{fontWeight:700,fontSize:14}}>Przypomnienie o zadaniach</div>
-                <div style={{fontSize:12,color:'#aaa',marginTop:2}}>
-                  {uRem.enabled?`Aktywne · ${uRem.time}`:'Wyłączone'}
-                </div>
-              </div>
-              <div className="toggle" style={{background:uRem.enabled?ub.accent:'#ddd'}}
-                onClick={() => {if(!notifOk&&!uRem.enabled)enableNotif(); updateReminder(!uRem.enabled,uRem.time);}}>
-                <div className="toggle-knob" style={{left:uRem.enabled?23:3}}/>
-              </div>
-            </div>
-            {uRem.enabled && (
-              <>
-                <label style={{display:'block',fontSize:13,fontWeight:700,marginBottom:6}}>Godzina:</label>
-                <input type="time" value={uRem.time}
-                  onChange={e=>updateReminder(true,e.target.value)}
-                  style={{width:'100%',padding:'10px 14px',border:'1px solid #ddd',
-                    borderRadius:10,fontSize:16,fontFamily:'Nunito,sans-serif',color:'#1a1a1a'}}/>
-                <div style={{fontSize:11,color:'#bbb',marginTop:8,lineHeight:1.6}}>
-                  ℹ️ Działa gdy strona jest otwarta. Zainstaluj jako aplikację ("Dodaj do ekranu głównego") dla lepszego działania w tle.
-                </div>
-              </>
-            )}
-          </div>
-
-          <div style={{...C}}>
-            <div style={{fontWeight:800,fontSize:15,marginBottom:10}}>📊 Podział zadań (tydzień {wk})</div>
-            {BROS.map(b => {
-              const bt = TASKS.filter(t => getAssigned(t,wk,swaps).includes(b.name));
-              return (
-                <div key={b.name} style={{marginBottom:10}}>
-                  <div style={{display:'flex',alignItems:'center',gap:6,marginBottom:4}}>
-                    <Av name={b.name} size={20}/>
-                    <span style={{fontWeight:700,fontSize:13}}>{b.name}</span>
-                    <span style={{fontSize:11,color:'#aaa',marginLeft:'auto'}}>{bt.length} zadań</span>
-                  </div>
-                  <div style={{fontSize:11,color:'#888',paddingLeft:26}}>
-                    {bt.map(t=>t.icon+' '+t.name).join(' · ')||'Brak zadań'}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Bottom nav */}
-      <div className="bottom-nav">
-        {[
-          {id:'dashboard',label:'Przegląd',ico:'🏠'},
-          {id:'mine',     label:'Moje',    ico:'✅',badge:pendingForMe.length},
-          {id:'scores',   label:'Wyniki',  ico:'🏆'},
-          {id:'settings', label:'Ustaw.',  ico:'⚙️'},
-        ].map(({id,label,ico,badge}) => (
-          <button key={id} className="nav-btn" onClick={()=>setPage(id)} style={{
-            color:page===id?ub.accent:'#ccc',
-            borderTop:page===id?`3px solid ${ub.accent}`:'3px solid transparent',
-          }}>
-            <span style={{fontSize:21}}>{ico}</span>
-            {label}
-            {badge>0 && <span className="notif-dot"/>}
-          </button>
-        ))}
-      </div>
-    </>
-  );
+  notifOk = Notification.permission === 'granted';
+  renderLogin();
+  showScreen('scr-login');
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+// ═══════════════════════════════════════
+//  ACTIONS
+// ═══════════════════════════════════════
+function markDone(id) {
+  if (!user || isDone(id) || !db) return;
+  const task = TASKS.find(t => t.id === id);
+  db.ref('domio/completions').push({ id, who: user, when: new Date().toISOString(), wk: WKEY });
+  showToast('✓ ' + task.name);
+}
+
+function proposeSwap(taskId, targetBro) {
+  if (!db) return;
+  db.ref('domio/swaps/' + WKEY + '/' + taskId).set({
+    from: user, to: targetBro, status: 'pending', when: new Date().toISOString()
+  });
+  hideModal();
+  showToast('🔄 Propozycja wysłana do ' + targetBro + '!');
+}
+
+function respondSwap(taskId, accept) {
+  if (!db) return;
+  if (accept) {
+    db.ref('domio/swaps/' + WKEY + '/' + taskId + '/status').set('accepted');
+    showToast('✅ Zamiana zaakceptowana!');
+  } else {
+    db.ref('domio/swaps/' + WKEY + '/' + taskId).remove();
+    showToast('❌ Propozycja odrzucona.');
+  }
+}
+
+function cancelSwap(taskId) {
+  if (!db) return;
+  db.ref('domio/swaps/' + WKEY + '/' + taskId).remove();
+  showToast('Propozycja cofnięta.');
+}
+
+async function enableNotif() {
+  if (!('Notification' in window)) { showToast('Przeglądarka nie obsługuje powiadomień'); return; }
+  const p = await Notification.requestPermission();
+  if (p === 'granted') { notifOk = true; showToast('🔔 Powiadomienia włączone!'); render(); }
+  else showToast('Odmówiono dostępu do powiadomień.');
+}
+
+function setReminder(enabled, time) {
+  reminders[user] = { enabled, time: time || '20:00' };
+  localStorage.setItem('domio-rem', JSON.stringify(reminders));
+  if (remTimerRef) clearTimeout(remTimerRef);
+  if (enabled) scheduleReminder(time || '20:00');
+  renderSettings();
+}
+
+function scheduleReminder(time) {
+  const [h, m] = time.split(':').map(Number);
+  const now = new Date(), target = new Date(now);
+  target.setHours(h, m, 0, 0);
+  if (target <= now) target.setDate(target.getDate() + 1);
+  remTimerRef = setTimeout(() => {
+    const undone = myTasks().filter(t => !isDone(t.id));
+    if (Notification.permission === 'granted') {
+      new Notification('Dom.io ⏰ Przypomnienie', {
+        body: undone.length > 0
+          ? 'Zostało Ci ' + undone.length + ' zadanie(ń): ' + undone.map(t=>t.name).join(', ')
+          : '🎉 Wszystkie zadania zrobione!',
+        tag: 'reminder',
+      });
+    }
+    const r = reminders[user];
+    if (r && r.enabled) scheduleReminder(r.time);
+  }, target - now);
+}
+
+// ═══════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════
+function render() {
+  if (!user) return;
+  renderHeader();
+  renderNav();
+  if (page === 'dashboard') renderDashboard();
+  else if (page === 'mine')  renderMine();
+  else if (page === 'scores') renderScores();
+  else if (page === 'settings') renderSettings();
+}
+
+// ── LOGIN ──────────────────────────────
+function renderLogin() {
+  const wrap = document.getElementById('scr-login');
+  wrap.innerHTML = '';
+
+  wrap.appendChild(el('div', {style:{textAlign:'center',marginBottom:'28px'}},
+    el('div', {style:{fontSize:'30px',fontWeight:'800',letterSpacing:'-1px'}}, 'Dom.io 🏠'),
+    el('div', {style:{fontSize:'13px',color:'#888',marginTop:'5px'}}, 'Kto to?')
+  ));
+
+  BROS.forEach(b => {
+    const bt = TASKS.filter(t => {
+      const a = getAssigned(t);
+      return a.includes(b.name);
+    });
+    const score = mScore(b.name);
+    const card = el('div', {
+      class: 'card',
+      style: {
+        cursor:'pointer', display:'flex', alignItems:'center', gap:'14px',
+        borderLeft: '4px solid ' + b.accent,
+      },
+      onClick: () => {
+        user = b.name;
+        const r = reminders[b.name];
+        if (r && r.enabled && r.time) scheduleReminder(r.time);
+        showScreen('scr-main');
+        page = 'dashboard';
+        render();
+      }
+    },
+      av(b.name, 52),
+      el('div', {style:{flex:'1'}},
+        el('div', {style:{fontWeight:'800',fontSize:'18px'}}, b.name),
+        el('div', {style:{fontSize:'12px',color:'#888',marginTop:'3px'}}, bt.length + ' zadań w tym tygodniu')
+      ),
+      el('div', {style:{textAlign:'right'}},
+        el('div', {style:{fontSize:'22px',fontWeight:'800',color:b.accent}}, String(score)),
+        el('div', {style:{fontSize:'10px',color:'#bbb'}}, 'ten miesiąc')
+      )
+    );
+    wrap.appendChild(card);
+  });
+
+  wrap.appendChild(el('div', {style:{textAlign:'center',marginTop:'16px',fontSize:'11px',color:'#ccc'}},
+    'Tydzień ' + WK + ' · ' + new Date().toLocaleDateString('pl-PL',{month:'long',year:'numeric'})
+  ));
+}
+
+// ── HEADER ────────────────────────────
+function renderHeader() {
+  const ub = getBro(user);
+  const mt = myTasks();
+  const done = mt.filter(t => isDone(t.id)).length;
+  const hdr = document.getElementById('main-header');
+  hdr.innerHTML = '';
+
+  const left = el('div', {style:{display:'flex',alignItems:'center',gap:'10px'}},
+    av(user, 32),
+    el('div', {},
+      el('div', {style:{fontWeight:'800',fontSize:'14px',display:'flex',alignItems:'center',gap:'6px'}},
+        user,
+        el('span', {style:{
+          fontSize:'9px',fontWeight:'600',padding:'1px 6px',borderRadius:'99px',
+          background: online ? '#E1F5EE' : '#FFFBEB',
+          color: online ? '#1D9E75' : '#F59E0B'
+        }}, online ? '🔥 LIVE' : '⚠️ offline')
+      ),
+      el('div', {style:{fontSize:'10px',color:'#aaa'}},
+        page === 'mine'
+          ? done + '/' + mt.length + ' zrobionych'
+          : 'Tydzień ' + WK
+      )
+    )
+  );
+
+  const notifBtn = el('button', {
+    style:{
+      padding:'6px 9px',
+      border:'1px solid ' + (notifOk ? ub.accent : '#ddd'),
+      borderRadius:'10px',
+      background: notifOk ? ub.light : 'transparent',
+      fontSize:'16px',
+      color: notifOk ? ub.dark : '#bbb',
+    },
+    onClick: notifOk ? null : enableNotif
+  }, notifOk ? '🔔' : '🔕');
+
+  const changeBtn = el('button', {
+    style:{padding:'6px 11px',border:'1px solid #ddd',borderRadius:'10px',fontSize:'12px',fontWeight:'700',color:'#888'},
+    onClick: () => {
+      user = null; page = 'dashboard';
+      renderLogin();
+      showScreen('scr-login');
+    }
+  }, 'Zmień');
+
+  hdr.appendChild(left);
+  hdr.appendChild(el('div', {style:{display:'flex',gap:'5px'}}, notifBtn, changeBtn));
+}
+
+// ── NAV ───────────────────────────────
+function renderNav() {
+  const ub = getBro(user);
+  const pendingCount = Object.values(swaps).filter(s => s.to === user && s.status === 'pending').length;
+  const nav = document.getElementById('main-nav');
+  nav.innerHTML = '';
+
+  [
+    {id:'dashboard', label:'Przegląd', ico:'🏠'},
+    {id:'mine',      label:'Moje',     ico:'✅', badge: pendingCount},
+    {id:'scores',    label:'Wyniki',   ico:'🏆'},
+    {id:'settings',  label:'Ustaw.',   ico:'⚙️'},
+  ].forEach(item => {
+    const active = page === item.id;
+    const btn = el('button', {
+      class: 'nav-btn',
+      style:{
+        color: active ? ub.accent : '#ccc',
+        borderTop: active ? '3px solid '+ub.accent : '3px solid transparent',
+      },
+      onClick: () => { page = item.id; render(); }
+    },
+      el('span', {style:{fontSize:'21px'}}, item.ico),
+      item.label
+    );
+    if (item.badge > 0) {
+      btn.appendChild(el('div', {class:'notif-dot'}));
+    }
+    nav.appendChild(btn);
+  });
+}
+
+// ── DASHBOARD ─────────────────────────
+function renderDashboard() {
+  const wrap = document.getElementById('main-content');
+  wrap.innerHTML = '';
+
+  // Progress cards
+  const grid = el('div', {style:{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'7px',marginBottom:'12px'}});
+  BROS.forEach(b => {
+    const bt = TASKS.filter(t => getAssigned(t).includes(b.name));
+    const bd = bt.filter(t => isDone(t.id, b.name)).length;
+    const pct = bt.length ? Math.round((bd/bt.length)*100) : 0;
+    grid.appendChild(el('div', {style:{
+      background:'#fff',border:'1px solid #ebebeb',
+      borderTop:'4px solid '+b.accent,borderRadius:'14px',
+      padding:'10px 8px',textAlign:'center'
+    }},
+      el('div', {style:{display:'flex',justifyContent:'center',marginBottom:'4px'}}, av(b.name, 26)),
+      el('div', {style:{fontWeight:'700',fontSize:'12px'}}, b.name),
+      el('div', {style:{fontSize:'11px',fontWeight:'700',marginTop:'1px',color:bd===bt.length&&bt.length>0?'#0A5E41':'#bbb'}}, bd+'/'+bt.length),
+      el('div', {class:'bar-track',style:{marginTop:'4px'}},
+        el('div', {class:'bar-fill',style:{width:pct+'%',background:b.accent}})
+      )
+    ));
+  });
+  wrap.appendChild(grid);
+
+  // Tasks
+  TASKS.forEach(task => {
+    const resp = getAssigned(task);
+    const isAll = task.assign === 'all';
+    const doneWho = BROS.filter(b => isDone(task.id, b.name));
+    const allDone = isAll ? doneWho.length === BROS.length : doneWho.length > 0;
+    const sComp = !isAll && doneWho[0] ? getComp(task.id, doneWho[0].name) : null;
+    const sw = swaps[task.id];
+    const lColor = allDone ? '#1D9E75' : (resp.length === 1 ? getBro(resp[0]).accent : '#e0e0e0');
+
+    const subtitleEl = el('div', {style:{display:'flex',alignItems:'center',gap:'5px',flexWrap:'wrap'}});
+
+    if (isAll) {
+      BROS.forEach(b => {
+        const bd = isDone(task.id, b.name);
+        subtitleEl.appendChild(el('span', {
+          class:'pill',
+          style:{
+            background: bd ? b.light : '#f5f5f5',
+            color: bd ? b.dark : '#ccc',
+            border: '1px solid '+(bd ? b.accent : '#ebebeb')
+          }
+        }, (bd?'✓ ':'') + b.name));
+      });
+    } else {
+      resp.forEach(n => {
+        subtitleEl.appendChild(av(n, 16));
+        subtitleEl.appendChild(el('span', {style:{fontSize:'11px',color:'#888'}}, n));
+      });
+      if (sComp) subtitleEl.appendChild(el('span', {style:{fontSize:'10px',color:'#0A5E41'}}, '· '+fmtRel(sComp.when)));
+    }
+
+    const nameEl = el('div', {style:{fontWeight:'700',fontSize:'13px',marginBottom:'3px',color:allDone?'#bbb':'#1a1a1a',textDecoration:allDone?'line-through':'none'}},
+      task.name
+    );
+    if (sw && sw.status === 'pending')
+      nameEl.appendChild(el('span',{style:{fontSize:'10px',marginLeft:'6px',color:'#F59E0B',fontWeight:'700'}},'⏳ zamiana…'));
+    if (sw && sw.status === 'accepted')
+      nameEl.appendChild(el('span',{style:{fontSize:'10px',marginLeft:'6px',color:'#1D9E75',fontWeight:'700'}},'🔄 zamieniono'));
+
+    wrap.appendChild(el('div', {
+      class:'card',
+      style:{display:'flex',alignItems:'center',gap:'10px',borderLeft:'4px solid '+lColor,opacity:allDone?'0.45':'1'}
+    },
+      el('div', {style:{
+        width:'38px',height:'38px',borderRadius:'11px',flexShrink:'0',
+        background:allDone?'#E1F5EE':'#f5f5f5',
+        display:'flex',alignItems:'center',justifyContent:'center',
+        fontSize:allDone?'16px':'20px'
+      }}, allDone ? '✓' : task.icon),
+      el('div', {style:{flex:'1',minWidth:'0'}}, nameEl, subtitleEl)
+    ));
+  });
+}
+
+// ── MOJE ZADANIA ──────────────────────
+function renderMine() {
+  const wrap = document.getElementById('main-content');
+  wrap.innerHTML = '';
+  const ub = getBro(user);
+
+  const pendingForMe = Object.entries(swaps).filter(([,s]) => s.to === user && s.status === 'pending');
+  const myOutgoing   = Object.entries(swaps).filter(([,s]) => s.from === user && s.status === 'pending');
+
+  // Przychodzące zamiany
+  if (pendingForMe.length > 0) {
+    const box = el('div', {style:{background:'#FFFBEB',border:'1px solid #FDE68A',borderRadius:'14px',padding:'12px 14px',marginBottom:'12px'}});
+    box.appendChild(el('div',{style:{fontWeight:'800',fontSize:'13px',color:'#92400E',marginBottom:'8px'}},'🔄 Propozycje zamiany ('+pendingForMe.length+')'));
+    pendingForMe.forEach(([taskId, sw]) => {
+      const task = TASKS.find(t => t.id === taskId);
+      const row = el('div',{style:{display:'flex',alignItems:'center',gap:'8px',padding:'8px 0',borderTop:'1px solid #FDE68A'}},
+        el('div',{style:{flex:'1'}},
+          el('div',{style:{fontWeight:'700',fontSize:'13px'}}, sw.from+' → '+(task?task.icon+' '+task.name:taskId)),
+          el('div',{style:{fontSize:'11px',color:'#A16207',marginTop:'1px'}},'Przejmiesz to zadanie od '+sw.from)
+        ),
+        el('button',{
+          style:{padding:'7px 11px',background:'#1D9E75',color:'#fff',borderRadius:'9px',fontSize:'12px',fontWeight:'800'},
+          onClick:()=>respondSwap(taskId,true)
+        },'✓ OK'),
+        el('button',{
+          style:{padding:'7px 11px',background:'#FEE2E2',color:'#DC2626',border:'1px solid #FCA5A5',borderRadius:'9px',fontSize:'12px',fontWeight:'800'},
+          onClick:()=>respondSwap(taskId,false)
+        },'✗ Nie')
+      );
+      box.appendChild(row);
+    });
+    wrap.appendChild(box);
+  }
+
+  // Wychodzące zamiany
+  if (myOutgoing.length > 0) {
+    const box = el('div',{style:{background:'#F0F9FF',border:'1px solid #BAE6FD',borderRadius:'14px',padding:'12px 14px',marginBottom:'12px'}});
+    box.appendChild(el('div',{style:{fontWeight:'800',fontSize:'13px',color:'#0369A1',marginBottom:'8px'}},'⏳ Oczekujące zamiany'));
+    myOutgoing.forEach(([taskId, sw]) => {
+      const task = TASKS.find(t => t.id === taskId);
+      const row = el('div',{style:{display:'flex',alignItems:'center',gap:'8px',padding:'8px 0',borderTop:'1px solid #BAE6FD'}},
+        el('div',{style:{flex:'1',fontSize:'13px'}},
+          (task?task.icon+' '+task.name:taskId)+' → ',
+          el('b',{},''),
+          sw.to,
+          el('div',{style:{fontSize:'11px',color:'#0284C7',marginTop:'1px'}},'Czekam na odpowiedź…')
+        ),
+        el('button',{
+          style:{padding:'6px 10px',border:'1px solid #BAE6FD',borderRadius:'9px',fontSize:'11px',fontWeight:'700',color:'#0369A1'},
+          onClick:()=>cancelSwap(taskId)
+        },'Cofnij')
+      );
+      box.appendChild(row);
+    });
+    wrap.appendChild(box);
+  }
+
+  const mt = myTasks();
+  if (mt.length === 0 && pendingForMe.length === 0) {
+    wrap.appendChild(el('div',{class:'card',style:{textAlign:'center',padding:'40px 16px'}},
+      el('div',{style:{fontSize:'40px',marginBottom:'14px'}},'🎉'),
+      el('div',{style:{fontWeight:'800',fontSize:'16px'}},'Ten tydzień masz wolny!'),
+      el('div',{style:{fontSize:'13px',color:'#aaa',marginTop:'6px'}},'Zasłużyłeś na odpoczynek.')
+    ));
+    return;
+  }
+
+  mt.forEach(task => {
+    const d = isDone(task.id);
+    const c = d ? getComp(task.id) : null;
+    const sw = swaps[task.id];
+    const hasOut = sw && sw.from === user && sw.status === 'pending';
+    const canSwap = !d && task.assign !== 'all' && task.assign !== 'bartek';
+
+    const btnGroup = el('div',{style:{display:'flex',flexDirection:'column',gap:'5px',flexShrink:'0'}});
+    if (!d) {
+      btnGroup.appendChild(el('button',{
+        style:{background:ub.accent,color:'#fff',border:'none',borderRadius:'10px',padding:'8px 12px',fontSize:'13px',fontWeight:'800'},
+        onClick:()=>markDone(task.id)
+      },'✓ Gotowe'));
+      if (canSwap && !hasOut) {
+        btnGroup.appendChild(el('button',{
+          style:{background:'transparent',color:ub.dark,border:'1px solid '+ub.accent,borderRadius:'10px',padding:'5px 12px',fontSize:'11px',fontWeight:'700'},
+          onClick:()=>openSwapModal(task.id)
+        },'🔄 Zamień'));
+      }
+      if (hasOut) btnGroup.appendChild(el('span',{style:{fontSize:'10px',color:'#F59E0B',fontWeight:'700',textAlign:'center'}},'⏳ czeka…'));
+    }
+
+    wrap.appendChild(el('div',{
+      class:'card',
+      style:{display:'flex',alignItems:'center',gap:'12px',borderLeft:'4px solid '+(d?'#1D9E75':ub.accent),opacity:d?'0.5':'1'}
+    },
+      el('div',{style:{width:'44px',height:'44px',borderRadius:'12px',flexShrink:'0',background:d?'#E1F5EE':ub.light,display:'flex',alignItems:'center',justifyContent:'center',fontSize:d?'18px':'22px',color:d?'#0A5E41':ub.dark}}, d?'✓':task.icon),
+      el('div',{style:{flex:'1',minWidth:'0'}},
+        el('div',{style:{fontWeight:'700',fontSize:'15px',marginBottom:'2px',color:d?'#aaa':'#1a1a1a',textDecoration:d?'line-through':'none'}}, task.name),
+        el('div',{style:{fontSize:'11px',color:'#aaa'}}, c ? 'Zrobione '+fmtRel(c.when) : task.note)
+      ),
+      btnGroup
+    ));
+  });
+}
+
+// ── SWAP MODAL ─────────────────────────
+function openSwapModal(taskId) {
+  const task = TASKS.find(t => t.id === taskId);
+  const ub = getBro(user);
+  const others = BROS.filter(b => b.name !== user);
+
+  const content = el('div',{},
+    el('div',{style:{fontWeight:'800',fontSize:'17px',marginBottom:'6px'}},'🔄 Zaproponuj zamianę'),
+    el('div',{style:{fontSize:'13px',color:'#888',marginBottom:'18px'}}, 'Chcesz oddać: ',el('b',{},task.icon+' '+task.name))
+  );
+  others.forEach(b => {
+    content.appendChild(el('button',{
+      style:{width:'100%',marginBottom:'10px',padding:'14px',background:b.light,color:b.dark,border:'2px solid '+b.accent,borderRadius:'12px',fontSize:'15px',fontWeight:'800',display:'flex',alignItems:'center',gap:'12px'},
+      onClick:()=>proposeSwap(taskId, b.name)
+    }, av(b.name, 36), el('span',{},'Zamień z '+b.name)));
+  });
+  content.appendChild(el('button',{
+    style:{width:'100%',padding:'12px',border:'1px solid #ebebeb',borderRadius:'12px',fontSize:'14px',color:'#888'},
+    onClick:hideModal
+  },'Anuluj'));
+
+  showModal(content);
+}
+
+// ── WYNIKI ─────────────────────────────
+function renderScores() {
+  const wrap = document.getElementById('main-content');
+  wrap.innerHTML = '';
+
+  const sorted = [...BROS].sort((a,b) => mScore(b.name) - mScore(a.name));
+  const maxS   = Math.max(...BROS.map(b => mScore(b.name)), 1);
+  const recent = [...comps].sort((a,b) => new Date(b.when)-new Date(a.when)).slice(0, 25);
+  const medals = ['🥇','🥈','🥉'];
+
+  wrap.appendChild(el('div',{style:{fontSize:'12px',color:'#bbb',marginBottom:'10px',textTransform:'capitalize'}},
+    'Wyniki · '+new Date().toLocaleDateString('pl-PL',{month:'long',year:'numeric'})
+  ));
+
+  const rankCard = el('div',{class:'card',style:{marginBottom:'14px'}});
+  sorted.forEach((b,i) => {
+    const row = el('div',{style:{display:'flex',alignItems:'center',gap:'10px',padding:'11px 0',borderBottom:i<2?'1px solid #f5f5f5':'none'}},
+      el('span',{style:{fontSize:'20px',width:'26px',textAlign:'center'}}, medals[i]),
+      av(b.name, 34),
+      el('div',{style:{flex:'1'}},
+        el('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:'5px'}},
+          el('span',{style:{fontWeight:'700',fontSize:'14px'}}, b.name),
+          el('span',{style:{fontSize:'16px',fontWeight:'800',color:b.accent}}, String(mScore(b.name)))
+        ),
+        el('div',{class:'bar-track'},
+          el('div',{class:'bar-fill',style:{width:Math.round((mScore(b.name)/maxS)*100)+'%',background:b.accent}})
+        )
+      )
+    );
+    rankCard.appendChild(row);
+  });
+  wrap.appendChild(rankCard);
+
+  wrap.appendChild(el('div',{style:{fontSize:'12px',color:'#bbb',marginBottom:'8px'}},'Ostatnia aktywność'));
+  if (recent.length === 0) {
+    wrap.appendChild(el('div',{class:'card',style:{textAlign:'center',color:'#ccc',fontSize:'13px',padding:'24px'}},'Brak aktywności 🧹'));
+  } else {
+    recent.forEach(c => {
+      const task = TASKS.find(t => t.id === c.id);
+      wrap.appendChild(el('div',{class:'card-sm',style:{display:'flex',alignItems:'center',gap:'10px'}},
+        av(c.who, 28),
+        el('div',{style:{flex:'1'}},
+          el('span',{style:{fontWeight:'700',fontSize:'13px'}}, c.who),
+          el('span',{style:{fontSize:'13px',color:'#555'}}, ' — '+(task?task.name:c.id)),
+          el('div',{style:{fontSize:'11px',color:'#bbb',marginTop:'1px'}}, fmtRel(c.when))
+        ),
+        el('span',{style:{fontSize:'18px'}}, task?task.icon:'📋')
+      ));
+    });
+  }
+}
+
+// ── USTAWIENIA ─────────────────────────
+function renderSettings() {
+  const wrap = document.getElementById('main-content');
+  wrap.innerHTML = '';
+  const ub  = getBro(user);
+  const rem = reminders[user] || { enabled:false, time:'20:00' };
+
+  // Powiadomienia
+  const notifCard = el('div',{class:'card',style:{marginBottom:'10px'}});
+  notifCard.appendChild(el('div',{style:{fontWeight:'800',fontSize:'15px',marginBottom:'14px'}},'🔔 Powiadomienia push'));
+  notifCard.appendChild(el('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:notifOk?'0':'12px'}},
+    el('div',{},
+      el('div',{style:{fontWeight:'700',fontSize:'14px'}},'Gdy brat zrobi zadanie'),
+      el('div',{style:{fontSize:'12px',color:'#aaa',marginTop:'2px'}}, notifOk?'✓ Aktywne':'Wyłączone')
+    ),
+    el('button',{
+      style:{padding:'8px 14px',border:'1px solid '+(notifOk?ub.accent:'#ddd'),borderRadius:'10px',background:notifOk?ub.light:'transparent',fontSize:'13px',fontWeight:'700',color:notifOk?ub.dark:'#555'},
+      onClick: notifOk?null:enableNotif
+    }, notifOk?'✓ Włączone':'Włącz')
+  ));
+  if (!notifOk) {
+    notifCard.appendChild(el('div',{style:{background:'#FFFBEB',border:'1px solid #FDE68A',borderRadius:'10px',padding:'10px 12px',fontSize:'12px',color:'#92400E'}},
+      '💡 Włącz powiadomienia żeby dostawać alerty o zadaniach i propozycjach zamiany.'
+    ));
+  }
+  wrap.appendChild(notifCard);
+
+  // Przypomnienia
+  const remCard = el('div',{class:'card',style:{marginBottom:'10px'}});
+  remCard.appendChild(el('div',{style:{fontWeight:'800',fontSize:'15px',marginBottom:'14px'}},'⏰ Codzienne przypomnienie'));
+  const toggle = el('div',{
+    class:'toggle',
+    style:{background:rem.enabled?ub.accent:'#ddd'},
+    onClick:()=>{
+      if (!notifOk && !rem.enabled) enableNotif();
+      setReminder(!rem.enabled, rem.time);
+    }
+  }, el('div',{class:'toggle-knob',style:{left:rem.enabled?'23px':'3px'}}));
+
+  remCard.appendChild(el('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'14px'}},
+    el('div',{},
+      el('div',{style:{fontWeight:'700',fontSize:'14px'}},'Przypomnienie o zadaniach'),
+      el('div',{style:{fontSize:'12px',color:'#aaa',marginTop:'2px'}}, rem.enabled?'Aktywne · '+rem.time:'Wyłączone')
+    ),
+    toggle
+  ));
+
+  if (rem.enabled) {
+    remCard.appendChild(el('label',{style:{display:'block',fontSize:'13px',fontWeight:'700',marginBottom:'6px'}},'Godzina:'));
+    const input = el('input',{
+      type:'time', value:rem.time,
+      style:{width:'100%',padding:'10px 14px',border:'1px solid #ddd',borderRadius:'10px',fontSize:'16px',fontFamily:"'Nunito',sans-serif",color:'#1a1a1a'}
+    });
+    input.addEventListener('change', e => setReminder(true, e.target.value));
+    remCard.appendChild(input);
+    remCard.appendChild(el('div',{style:{fontSize:'11px',color:'#bbb',marginTop:'8px',lineHeight:'1.6'}},
+      'ℹ️ Działa gdy strona jest otwarta. Zainstaluj jako aplikację dla lepszego działania w tle.'
+    ));
+  }
+  wrap.appendChild(remCard);
+
+  // Podział zadań
+  const taskCard = el('div',{class:'card'});
+  taskCard.appendChild(el('div',{style:{fontWeight:'800',fontSize:'15px',marginBottom:'10px'}},'📊 Podział zadań (tydzień '+WK+')'));
+  BROS.forEach(b => {
+    const bt = TASKS.filter(t => getAssigned(t).includes(b.name));
+    taskCard.appendChild(el('div',{style:{marginBottom:'10px'}},
+      el('div',{style:{display:'flex',alignItems:'center',gap:'6px',marginBottom:'4px'}},
+        av(b.name, 20),
+        el('span',{style:{fontWeight:'700',fontSize:'13px'}}, b.name),
+        el('span',{style:{fontSize:'11px',color:'#aaa',marginLeft:'auto'}}, bt.length+' zadań')
+      ),
+      el('div',{style:{fontSize:'11px',color:'#888',paddingLeft:'26px'}},
+        bt.map(t=>t.icon+' '+t.name).join(' · ') || 'Brak zadań'
+      )
+    ));
+  });
+  wrap.appendChild(taskCard);
+}
+
+// ═══════════════════════════════════════
+//  START
+// ═══════════════════════════════════════
+window.addEventListener('load', () => {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+  boot();
+});
 </script>
 </body>
 </html>
